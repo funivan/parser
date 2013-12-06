@@ -5,6 +5,8 @@
   use Fiv\Parser\Request;
 
   /**
+   * Output debug information to file
+   *
    * @author Ivan Scherbak <dev@funivan.com>
    */
   class File implements \Fiv\Parser\Debug {
@@ -16,7 +18,7 @@
         $outputFile = '/tmp/' . preg_replace('!([^a-z0-9]{1,})!i', '_', get_called_class());
       }
       $this->outputFile = $outputFile;
-      # create empty file name
+      # create empty file
       file_put_contents($this->outputFile, '');
     }
 
@@ -33,7 +35,7 @@
       $lineId = '#' . strftime('#%s - %F %T', time());
 
       if ($titleText) {
-        $data = str_repeat('=', 50 - strlen($titleText)) . ' ' . $titleText . '/'  . PHP_EOL . '' . $data . ' ' . PHP_EOL . str_repeat('=', 50 - strlen($titleText)) . ' /' . $titleText . PHP_EOL;
+        $data = str_repeat('=', 50 - strlen($titleText)) . ' ' . $titleText . '/' . PHP_EOL . '' . $data . ' ' . PHP_EOL . str_repeat('=', 50 - strlen($titleText)) . ' /' . $titleText . PHP_EOL;
       }
 
       $data = $lineId . PHP_EOL . $data . PHP_EOL;

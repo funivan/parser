@@ -90,25 +90,26 @@
     protected $resource = null;
 
     public function __construct() {
-      $this->init();
-    }
-
-
-    protected function init() {
       $this->resource = curl_init();
       # set default  params
       $this->setHeader($this->defaultHeaders);
       $this->setOptionsArray($this->defaultOptions);
+    }
 
+    /**
+     * @return static
+     */
+    public static function init() {
+      return new static();
     }
 
     /**
      * Make post request
      *
-     * @param string                $url
+     * @param string $url
      * @param mixed (array, string) $post
-     * @param boolean               $follow
-     * @param integer               $level
+     * @param boolean $follow
+     * @param integer $level
      * @return mixed (string, boolean)
      */
     public function post($url, $post, $follow = true, $level = 5) {
@@ -125,7 +126,7 @@
 
     /**
      *
-     * @param string  $url
+     * @param string $url
      * @param boolean $follow
      * @param integer $level
      * @return mixed (string, boolean)
@@ -146,7 +147,7 @@
      *
      * @author  Ivan Scherbak <dev@funivan.com>
      * @version 7/5/12
-     * @param string  $url
+     * @param string $url
      * @param boolean $follow
      * @param integer $level
      */
@@ -224,33 +225,11 @@
     }
 
     /**
-     * "url"
-     * "content_type"
-     * "http_code"
-     * "header_size"
-     * "request_size"
-     * "filetime"
-     * "ssl_verify_result"
-     * "redirect_count"
-     * "total_time"
-     * "namelookup_time"
-     * "connect_time"
-     * "pretransfer_time"
-     * "size_upload"
-     * "size_download"
-     * "speed_download"
-     * "speed_upload"
-     * "download_content_length"
-     * "upload_content_length"
-     * "starttransfer_time"
-     * "redirect_time"
-     * "certinfo"
-     * "request_header" (This is only set if the CURLINFO_HEADER_OUT is set by a previous call to curl_setopt())
      *
-     * @return stdClass
+     * @return \Fiv\Parser\Request\Info
      */
     public function getInfo() {
-      return (object)curl_getinfo($this->resource);
+      return new \Fiv\Parser\Request\Info(curl_getinfo($this->resource));
     }
 
     public function setOption($option, $value) {
@@ -273,8 +252,8 @@
     /**
      *
      * @param mixed (boolean, string, array) $headers
-     * @param boolean                        $raw
-     * @param boolean                        $merge
+     * @param boolean $raw
+     * @param boolean $merge
      * @throws \Exeption
      * @return array
      */

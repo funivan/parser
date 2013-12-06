@@ -5,13 +5,14 @@
   use Fiv\Parser\Request;
 
   /**
+   * Debug class for request
+   * Output log information to screen
+   *
    * @author Ivan Scherbak <dev@funivan.com>
    */
   class Raw implements \Fiv\Parser\Debug {
 
     protected $showBodyStatus = false;
-
-
 
     public function beforeRequest(Request $request) {
 
@@ -52,12 +53,20 @@
       echo "\n\n" . str_repeat('=', 10) . ' ' . $text . ' ' . str_repeat('=', 50 - strlen($text)) . "\n";
     }
 
+    /**
+     * @return bool
+     */
     public function getShowBodyStatus() {
       return $this->showBodyStatus;
     }
 
+    /**
+     * @param $showBodyStatus
+     * @return $this
+     */
     public function setShowBodyStatus($showBodyStatus) {
       $this->showBodyStatus = $showBodyStatus;
+      return $this;
     }
 
   }

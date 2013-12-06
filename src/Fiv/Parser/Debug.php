@@ -3,6 +3,8 @@
   namespace Fiv\Parser;
 
   /**
+   * Debug interface for Request
+   *
    * @author Ivan Scherbak <dev@funivan.com>
    */
   interface Debug {

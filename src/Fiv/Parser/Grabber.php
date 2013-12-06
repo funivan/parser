@@ -4,9 +4,15 @@
   /**
    * More powerful of curl and html classes
    *
+   * ```
+   * // get copyright text from page
+   * $author = \Fiv\Parser\Grabber::init()->getHtml()->_val('//*[@class="copyright"]', 0)
+   * ```
    * @author  Ivan Scherbak <dev@funivan.com>
    */
-  class Main {
+  class Grabber {
+
+    const N = __CLASS__;
 
     /**
      * @var null|Request
@@ -19,20 +25,20 @@
     protected $lastPage = null;
 
     public function __construct() {
-      $this->init();
+      $this->request = new Request();
     }
 
-    public function init() {
-      $this->request = new Request();
+    /**
+     * @return static
+     */
+    public static function init() {
+      return new static();
     }
 
 
     /**
      *
-     * @version 5/4/12
-     * @author  Ivan Scherbak <dev@funivan.com>  5/4/12
-     * @version 10/24/12
-     * @param string  $url
+     * @param string $url
      * @param boolean $follow
      * @param integer $level
      * @return Html object
@@ -45,12 +51,10 @@
 
     /**
      *
-     * @author  Ivan Scherbak <dev@funivan.com> 5/4/12
-     * @version 10/24/12
-     * @param string                $url
+     * @param string $url
      * @param mixed (array, string) $post
-     * @param boolean               $follow
-     * @param integer               $level
+     * @param boolean $follow
+     * @param integer $level
      * @return Html object
      */
     public function postHtml($url, $post, $follow = true, $level = 5) {
@@ -62,17 +66,16 @@
     /**
      * Info used for charset detection
      *
-     * @author  Ivan Scherbak <dev@funivan.com>
-     * @version 10/03/12
-     * @param string   $page
-     * @param stdClass $info
+     * @param string $page
+     * @param \Fiv\Parser\Request\Info|\Fiv\Parser\stdClass $info
      * @return Html
+     * @author  Ivan Scherbak <dev@funivan.com> 10/03/12
      */
-    public static function createHtmlObj($page, $info) {
+    public static function createHtmlObj($page, \Fiv\Parser\Request\Info $info = null) {
       $defaultEncoding = 'utf-8';
       $html = new Html();
 
-      $type = strtolower($info->content_type);
+      $type = !empty($info->content_type) ? strtolower($info->content_type) : "";
 
       preg_match('!/(?<type>[a-z]+)(;\s*charset=(?<charset>[a-z0-9-]+)|)!i', $type, $pageInfo);
       if (!empty($pageInfo['type']) and $pageInfo['type'] == 'xml') {
@@ -116,7 +119,7 @@
      * @author  Ivan Scherbak <dev@funivan.com>
      * @version 12/26/12 11:18 PM
      * @param string $path
-     * @param Html   $page
+     * @param Html $page
      * @return array
      */
     public static function getDefaultFormData($path, Html $page) {
@@ -201,7 +204,7 @@
      * @author  Ivan Scherbak <dev@funivan.com> 10/03/12
      * @version 12/26/12 11:08 PM
      * @param string $currentUrl
-     * @param Html   $page
+     * @param Html $page
      * @return Html
      */
     public static function convertLinksToAbsolute($currentUrl, Html $page) {
