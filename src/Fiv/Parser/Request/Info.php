@@ -35,28 +35,28 @@
 
     protected $dataMap = array(
       "url" => "url",
-      "content_type" => "contentType",
-      "http_code" => "httpCode",
-      "header_size" => "headerSize",
-      "request_size" => "requestSize",
+      "contenttype" => "content_type",
+      "httpcode" => "http_code",
+      "headersize" => "header_size",
+      "requestsize" => "request_size",
       "filetime" => "filetime",
-      "ssl_verify_result" => "sslVerifyResult",
-      "redirect_count" => "redirectCount",
-      "total_time" => "totalTime",
-      "namelookup_time" => "namelookupTime",
-      "connect_time" => "connectTime",
-      "pretransfer_time" => "pretransferTime",
-      "size_upload" => "sizeUpload",
-      "size_download" => "sizeDownload",
-      "speed_download" => "speedDownload",
-      "speed_upload" => "speedUpload",
-      "download_content_length" => "downloadContentLength",
-      "upload_content_length" => "uploadContentLength",
-      "starttransfer_time" => "startTransferTime",
-      "redirect_time" => "redirectTime",
+      "sslverifyresult" => "ssl_verify_result",
+      "redirectcount" => "redirect_count",
+      "totaltime" => "total_time",
+      "namelookuptime" => "namelookup_time",
+      "connecttime" => "connect_time",
+      "pretransfertime" => "pretransfer_time",
+      "sizeupload" => "size_upload",
+      "sizedownload" => "size_download",
+      "speeddownload" => "speed_download",
+      "speedupload" => "speed_upload",
+      "downloadcontentlength" => "download_content_length",
+      "uploadcontentlength" => "upload_content_length",
+      "starttransfertime" => "starttransfer_time",
+      "redirecttime" => "redirect_time",
       "certinfo" => "certinfo",
-      "request_header" => "requestHeader",
-      "primary_ip" => "primaryIp",
+      "requestheader" => "request_header",
+      "primaryip" => "primary_ip",
     );
 
     public function __construct($data = array()) {
@@ -67,11 +67,12 @@
 
     public function __call($name, $arguments) {
       $name = strtolower($name);
-      if (array_key_exists($name, $this->data)) {
-        return $this->data[$name];
-      } else {
-        throw new \Exception('Invalid method name #' . $name);
+      $methodName = substr($name, 3);
+      if (strpos($name, 'get') === 0 and isset($this->dataMap[$methodName])) {
+        return isset($this->data[$methodName]) ? $this->data[$methodName] : null;
       }
+
+      throw new \Exception('Invalid method name #' . $name);
     }
 
 
@@ -83,8 +84,9 @@
       $this->data = array();
 
       foreach ($data as $key => $value) {
-        $methodName = isset($this->dataMap[$key]) ? $this->dataMap[$key] : $key;
-        $keyName = "get" . strtolower($methodName);
+        $methodName = array_search($key, $this->dataMap);
+        $methodName = !empty($methodName) ? $methodName : $key;
+        $keyName = strtolower($methodName);
         $this->data[$keyName] = $value;
       }
 

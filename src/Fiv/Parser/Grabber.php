@@ -75,7 +75,7 @@
       $defaultEncoding = 'utf-8';
       $html = new Html();
 
-      $type = !empty($info->content_type) ? strtolower($info->content_type) : "";
+      $type = $info->getContentType() ? strtolower($info->getContentType()) : "";
 
       preg_match('!/(?<type>[a-z]+)(;\s*charset=(?<charset>[a-z0-9-]+)|)!i', $type, $pageInfo);
       if (!empty($pageInfo['type']) and $pageInfo['type'] == 'xml') {
@@ -105,8 +105,8 @@
       $html->load($page);
 
       # convert href and src to full path
-      if (isset($info->url)) {
-        $html = self::convertLinksToAbsolute($info->url, $html);
+      if ($info->getUrl()) {
+        $html = self::convertLinksToAbsolute($info->getUrl(), $html);
       }
 
       return $html;
