@@ -25,6 +25,7 @@
    * @method getRedirectTime()
    * @method getCertInfo()
    * @method getRequestHeader()  This is only set if the CURLINFO_HEADER_OUT is set by a previous call to curl_setopt())
+   * @method getPrimaryIp()
    *
    * @author Ivan Shcherbak <dev@funivan.com> 12/4/13
    */
@@ -55,6 +56,7 @@
       "redirect_time" => "redirectTime",
       "certinfo" => "certinfo",
       "request_header" => "requestHeader",
+      "primary_ip" => "primaryIp",
     );
 
     public function __construct($data = array()) {
@@ -81,14 +83,8 @@
       $this->data = array();
 
       foreach ($data as $key => $value) {
-        if (!is_string($value) and !is_numeric($value) or !is_bool($value)) {
-          throw new \Exception('Invalid value: ' . $value);
-        }
-        if (!isset($this->dataMap[$key])) {
-          throw new \Exception('You can not set data with key #' . $key);
-        }
-
-        $keyName = "get" . strtolower($this->dataMap[$key]);
+        $methodName = isset($this->dataMap[$key]) ? $this->dataMap[$key] : $key;
+        $keyName = "get" . strtolower($methodName);
         $this->data[$keyName] = $value;
       }
 

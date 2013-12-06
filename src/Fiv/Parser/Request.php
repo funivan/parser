@@ -187,8 +187,8 @@
 
       $info = $this->getInfo();
 
-      $this->responseHeader = substr($response, 0, $info->header_size);
-      $this->responseBody = substr($response, $info->header_size);
+      $this->responseHeader = substr($response, 0, $info->getHeaderSize());
+      $this->responseBody = substr($response, $info->getHeaderSize());
       if (!isset($optionsBeforeRequest[CURLOPT_HEADER]) or $optionsBeforeRequest[CURLOPT_HEADER] == false) {
         $response = $this->responseBody;
       }
