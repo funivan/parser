@@ -2,7 +2,6 @@
 
   namespace Fiv\Parser;
 
-
   /**
    *
    * @method Html _del ($selector) Delete elements in document
@@ -229,9 +228,9 @@
      * $table = $html->match('!(\d{4,})!')->_html('//table');
      * $table = $html->match('!(\d{4,})!', 3, 'all')->_html('//table');
      * </code>
-     * @param string                   $regex
-     * @param integer                  $i
-     * @param mixed (boolean | string) $matchMethod
+     * @param string  $regex
+     * @param integer $i
+     * @param bool    $matchMethod
      * @return $this
      */
     public function match($regex, $i = 1, $matchMethod = false) {
@@ -243,10 +242,10 @@
     /**
      * Match regex in document
      * <code>
-     *  $tels = $gtml->matchDoc('!([0-9]{4,6})!');
+     *  $tels = $html->matchDoc('!([0-9]{4,6})!');
      * </code>
      *
-     * @param xtring  $regex
+     * @param string  $regex
      * @param integer $i
      * @return array
      */

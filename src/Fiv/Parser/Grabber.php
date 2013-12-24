@@ -38,7 +38,7 @@
 
     /**
      *
-     * @param string $url
+     * @param string  $url
      * @param boolean $follow
      * @param integer $level
      * @return Html object
@@ -51,10 +51,10 @@
 
     /**
      *
-     * @param string $url
-     * @param mixed (array, string) $post
-     * @param boolean $follow
-     * @param integer $level
+     * @param string  $url    Page url
+     * @param array   $post   Array of data
+     * @param boolean $follow Follow location
+     * @param integer $level  Maximum redirect level
      * @return Html object
      */
     public function postHtml($url, $post, $follow = true, $level = 5) {
@@ -66,7 +66,7 @@
     /**
      * Info used for charset detection
      *
-     * @param string $page
+     * @param string                                        $page
      * @param \Fiv\Parser\Request\Info|\Fiv\Parser\stdClass $info
      * @return Html
      * @author  Ivan Scherbak <dev@funivan.com> 10/03/12
@@ -119,7 +119,7 @@
      * @author  Ivan Scherbak <dev@funivan.com>
      * @version 12/26/12 11:18 PM
      * @param string $path
-     * @param Html $page
+     * @param Html   $page
      * @return array
      */
     public static function getDefaultFormData($path, Html $page) {
@@ -204,7 +204,7 @@
      * @author  Ivan Scherbak <dev@funivan.com> 10/03/12
      * @version 12/26/12 11:08 PM
      * @param string $currentUrl
-     * @param Html $page
+     * @param Html   $page
      * @return Html
      */
     public static function convertLinksToAbsolute($currentUrl, Html $page) {
@@ -285,7 +285,7 @@
      * @return string
      */
     public static function cleanPage($data) {
-      $data = str_replace(str_split('\t\n\r'), '', $data);
+      $data = str_replace(str_split("\t\n\r"), '', $data);
       $data = preg_replace('!\s{2,}!u', ' ', $data);
       return trim($data);
     }

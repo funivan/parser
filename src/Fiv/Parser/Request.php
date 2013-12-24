@@ -106,10 +106,10 @@
     /**
      * Make post request
      *
-     * @param string $url
+     * @param string                $url
      * @param mixed (array, string) $post
-     * @param boolean $follow
-     * @param integer $level
+     * @param boolean               $follow
+     * @param integer               $level
      * @return mixed (string, boolean)
      */
     public function post($url, $post, $follow = true, $level = 5) {
@@ -126,7 +126,7 @@
 
     /**
      *
-     * @param string $url
+     * @param string  $url
      * @param boolean $follow
      * @param integer $level
      * @return mixed (string, boolean)
@@ -147,7 +147,7 @@
      *
      * @author  Ivan Scherbak <dev@funivan.com>
      * @version 7/5/12
-     * @param string $url
+     * @param string  $url
      * @param boolean $follow
      * @param integer $level
      */
@@ -235,6 +235,7 @@
     public function setOption($option, $value) {
       curl_setopt($this->resource, $option, $value);
       $this->options[$option] = $value;
+      return $this;
     }
 
     public function setOptionsArray(array $optionsArray) {
@@ -252,8 +253,8 @@
     /**
      *
      * @param mixed (boolean, string, array) $headers
-     * @param boolean $raw
-     * @param boolean $merge
+     * @param boolean                        $raw
+     * @param boolean                        $merge
      * @throws \Exeption
      * @return array
      */
