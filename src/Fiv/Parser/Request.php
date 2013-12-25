@@ -238,27 +238,37 @@
       return $this;
     }
 
+    /**
+     * Array of CURLOPT_*
+     *
+     * @param array $optionsArray
+     * @return $this
+     */
     public function setOptionsArray(array $optionsArray) {
       foreach ($optionsArray as $key => $value) {
         $this->options[$key] = $value;
       }
 
       curl_setopt_array($this->resource, $optionsArray);
+      return $this;
     }
 
+    /**
+     * @return array
+     */
     public function getOptions() {
       return $this->options;
     }
 
     /**
      *
-     * @param mixed (boolean, string, array) $headers
-     * @param boolean                        $raw
-     * @param boolean                        $merge
+     * @param boolean|string|array $headers
+     * @param boolean              $raw
+     * @param boolean              $merge
      * @throws \Exeption
      * @return array
      */
-    public function setHeader($headers = false, $raw = false, $merge = true) {
+    public function setHeader($headers, $raw = false, $merge = true) {
       if ($raw == true and is_string($headers)) {
         preg_match_all('!([^:]+):(.*?)\n!', $headers, $matches);
         if (!empty($matches[1])) {
@@ -291,8 +301,13 @@
       return $this->debugClass;
     }
 
+    /**
+     * @param Debug $debugClass
+     * @return $this
+     */
     public function setDebugClass(Debug $debugClass) {
       $this->debugClass = $debugClass;
+      return $this;
     }
 
     /**
