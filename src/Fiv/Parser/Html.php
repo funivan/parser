@@ -328,7 +328,7 @@
     }
 
     /**
-     * Magick method to get objects DOMNodeList
+     * Magic method to get objects DOMNodeList
      *
      * <code>
      * $td = $html->_obj('.//td');
@@ -347,7 +347,7 @@
     /**
      *
      * @param DOMNodeList $objects
-     * @return array
+     * @return Html[]
      */
     protected function Attr_get($objects) {
       $html = $this->Attr_html($objects);
@@ -358,7 +358,7 @@
     /**
      *
      * @param DOMNodeList $objects
-     * @return array
+     * @return Html[]
      */
     protected function Attr_outerGet($objects) {
       $html = $this->Attr_outerHtml($objects);
