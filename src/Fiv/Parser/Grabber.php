@@ -38,7 +38,7 @@
 
     /**
      *
-     * @param string  $url
+     * @param string $url
      * @param boolean $follow
      * @param integer $level
      * @return Html object
@@ -51,10 +51,10 @@
 
     /**
      *
-     * @param string  $url    Page url
-     * @param array   $post   Array of data
+     * @param string $url Page url
+     * @param array $post Array of data
      * @param boolean $follow Follow location
-     * @param integer $level  Maximum redirect level
+     * @param integer $level Maximum redirect level
      * @return Html object
      */
     public function postHtml($url, $post, $follow = true, $level = 5) {
@@ -66,7 +66,7 @@
     /**
      * Info used for charset detection
      *
-     * @param string                                        $page
+     * @param string $page
      * @param \Fiv\Parser\Request\Info|\Fiv\Parser\stdClass $info
      * @return Html
      * @author  Ivan Scherbak <dev@funivan.com> 10/03/12
@@ -85,7 +85,7 @@
       }
 
       if (empty($pageInfo['charset'])) {
-        preg_match('!<meta([^>]*)charset\s*=\s*(?<charset>[^>]+)\s[^>]*>!', $page, $pageInfoAdditional);
+        preg_match('!<meta([^>]*)charset\s*=\s*(?<charset>[^>]+)\s*[^>]*>!Uu', $page, $pageInfoAdditional);
         if (!empty($pageInfoAdditional['charset'])) {
           $pageInfo['charset'] = trim($pageInfoAdditional['charset'], '\'"');
         }
@@ -113,13 +113,30 @@
     }
 
     /**
+     * @param $html
+     * @return null|string
+     */
+    public function getEncodingFromHtml($html) {
+      preg_match('!<meta([^>]*)charset\s*=\s*(?<charset>.+)[\'\"\s>][^>]*>!Uu', $html, $pageInfoAdditional);
+      if (!empty($pageInfoAdditional['charset'])) {
+
+        $encoding = trim($pageInfoAdditional['charset'], '\'"');
+        $encoding = strtoupper($encoding);
+        if (in_array($encoding, mb_list_encodings())) {
+          return $encoding;
+        }
+      }
+      return null;
+    }
+
+    /**
      * Get Default data of form. Form is get by $path
      * Return key->value array where key is name of field
      *
      * @author  Ivan Scherbak <dev@funivan.com>
      * @version 12/26/12 11:18 PM
      * @param string $path
-     * @param Html   $page
+     * @param Html $page
      * @return array
      */
     public static function getDefaultFormData($path, Html $page) {
@@ -204,7 +221,7 @@
      * @author  Ivan Scherbak <dev@funivan.com> 10/03/12
      * @version 12/26/12 11:08 PM
      * @param string $currentUrl
-     * @param Html   $page
+     * @param Html $page
      * @return Html
      */
     public static function convertLinksToAbsolute($currentUrl, Html $page) {

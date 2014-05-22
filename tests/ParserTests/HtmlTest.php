@@ -73,4 +73,8 @@
       $html = new Html($fileData);
       return $html;
     }
-  }
+
+    public function testHtmlEncoding(){
+      
+    }
+  } 
