@@ -10,7 +10,7 @@
    * @method string _outerHtml ($selector) Return outer html of elements
    * @method Html _get ($selector) Return array of objects based in inner html
    * @method Html _outerGet ($selector) Return array of Fiv_Html objects based on outer html
-   * @method DOMNodeList _obj ($selector)
+   * @method \DOMNodeList _obj ($selector)
    * @method array _attributes ($selector) Return attributes of elements
    * @method array _properties ($selector) Return properties of elements
    *
@@ -35,7 +35,7 @@
     public $docType = 'html';
 
     /**
-     * @var DOMDocument
+     * @var \DOMDocument
      */
     private $dom = null;
 
@@ -193,11 +193,11 @@
      *
      * @param array                     $result
      * @param mixed (boolean | integer) $indexOfElement
-     * @return mixed (array | string | false | DOMNodeList | DOMElement)
+     * @return mixed (array | string | false | \DOMNodeList | \DOMElement)
      */
     private function BeforeGet($result, $indexOfElement = null) {
       if ($indexOfElement !== null) {
-        if ($result instanceof DOMNodeList) {
+        if ($result instanceof \DOMNodeList) {
           $data = $result->item($indexOfElement);
         } else {
           $data = isset($result[$indexOfElement]) ? $result[$indexOfElement] : false;
@@ -328,7 +328,7 @@
     }
 
     /**
-     * Magic method to get objects DOMNodeList
+     * Magic method to get objects \DOMNodeList
      *
      * <code>
      * $td = $html->_obj('.//td');
@@ -337,8 +337,8 @@
      * }
      * </code>
      *
-     * @param DOMNodeList $objects
-     * @return DOMNodeList
+     * @param \DOMNodeList $objects
+     * @return \DOMNodeList
      */
     protected function Attr_obj($objects) {
       return $objects;
@@ -346,7 +346,7 @@
 
     /**
      *
-     * @param DOMNodeList $objects
+     * @param \DOMNodeList $objects
      * @return Html[]
      */
     protected function Attr_get($objects) {
@@ -357,7 +357,7 @@
 
     /**
      *
-     * @param DOMNodeList $objects
+     * @param \DOMNodeList $objects
      * @return Html[]
      */
     protected function Attr_outerGet($objects) {
@@ -393,7 +393,7 @@
      * <code>
      *    $td = $html->_html('//td');
      * </code>
-     * @param DOMNodeList $objects
+     * @param \DOMNodeList $objects
      * @return array
      */
     protected function Attr_html($objects) {
@@ -415,7 +415,7 @@
      * $links = $html->_outerHtml('//a');
      * </code>
      *
-     * @param DOMNodeList $objects
+     * @param \DOMNodeList $objects
      * @return array
      */
     protected function Attr_outerHtml($objects) {
@@ -455,7 +455,7 @@
      *  $html->_del('//a')
      * </code>
      *
-     * @param DOMNodeList $objects
+     * @param \DOMNodeList $objects
      * @return $this
      */
     protected function Attr_del($objects) {
@@ -476,7 +476,7 @@
      * </code>
      *
      * @author vkey <dev@vkey.org>
-     * @param DOMNodeList $objects
+     * @param \DOMNodeList $objects
      * @return array
      */
     protected function Attr_attributes($objects) {
@@ -502,7 +502,7 @@
      * </code>
      *
      * @author Ivan Scherbak <dev@funivan.com>
-     * @param DOMNodeList $objects
+     * @param \DOMNodeList $objects
      * @return array
      */
     protected function Attr_properties($objects) {
@@ -550,9 +550,9 @@
         foreach ($itemsParams as $elementResultIndex => $elementResultPath) {
           $elementsNode = $nodeDocument->_obj($elementResultPath);
           $value = false;
-          if ($elementsNode instanceof DOMNodeList) {
+          if ($elementsNode instanceof \DOMNodeList) {
             $item = $elementsNode->item(0);
-            if ($item instanceof DOMElement) {
+            if ($item instanceof \DOMElement) {
               $values = $this->Attr_html($elementsNode);
               $value = $values[0];
             } elseif (is_object($item)) {
