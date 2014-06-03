@@ -81,6 +81,8 @@
       CURLOPT_SSL_VERIFYHOST => false,
       CURLOPT_COOKIEJAR => "/tmp/fiv-cookie.txt",
       CURLOPT_COOKIEFILE => "/tmp/fiv-cookie.txt",
+      CURLOPT_FOLLOWLOCATION => true,
+      CURLOPT_MAXREDIRS => 5,
     );
 
     /**
@@ -91,7 +93,7 @@
     protected $resource = null;
 
     /**
-     * Init curl 
+     * Init curl
      * Set default headers and options
      */
     public function __construct() {
@@ -101,28 +103,20 @@
       $this->restoreDefaultOptions();
     }
 
-    /**
-     * @return static
-     */
-    public static function init() {
-      return new static();
-    }
 
     /**
      * Make post request
      *
      * @param string $url
-     * @param mixed (array, string) $post
-     * @param boolean $follow
-     * @param integer $level
+     * @param array $data
      * @return mixed (string, boolean)
      */
-    public function post($url, $post, $follow = true, $level = 5) {
+    public function post($url, $data) {
 
-      $this->prepareRequest($url, $follow, $level);
+      $this->prepareRequest($url);
 
       $this->setOption(CURLOPT_POST, 1);
-      $this->setOption(CURLOPT_POSTFIELDS, $post);
+      $this->setOption(CURLOPT_POSTFIELDS, $data);
 
       $result = $this->executeRequest();
 
@@ -132,49 +126,40 @@
     /**
      *
      * @param string $url
-     * @param boolean $follow
-     * @param integer $level
-     * @return mixed (string, boolean)
+     * @return string
      */
-    public function get($url, $follow = true, $level = 5) {
+    public function get($url) {
 
-      $this->prepareRequest($url, $follow, $level);
+      $this->prepareRequest($url);
+
       $this->setOption(CURLOPT_HTTPGET, true);
       $this->setOption(CURLOPT_POSTFIELDS, false);
 
       $this->setOption(CURLOPT_POST, 0);
 
       $result = $this->executeRequest();
+
       return $result;
     }
 
     /**
-     *
-     * @author  Ivan Scherbak <dev@funivan.com>
-     * @version 7/5/12
      * @param string $url
-     * @param boolean $follow
-     * @param integer $level
+     * @return $this
      */
-    protected function prepareRequest($url, $follow = true, $level = 5) {
+    protected function prepareRequest($url) {
 
       if (strpos($url, ' ')) {
         $url = str_replace(' ', '%20', $url);
       }
 
-      $this->setOption(CURLOPT_URL, $url);
+      curl_setopt($this->resource, CURLOPT_URL, $url);
 
-      if ($follow) {
-        $this->setOption(CURLOPT_FOLLOWLOCATION, true);
-        $this->setOption(CURLOPT_MAXREDIRS, intval($level));
-      } else {
-        $this->setOption(CURLOPT_FOLLOWLOCATION, false);
-      }
+      return $this;
     }
 
     /**
      *
-     * @return mixed
+     * @return string
      */
     protected function executeRequest() {
       $debugClass = $this->getDebugClass();
@@ -187,6 +172,7 @@
 
       $this->setOption(CURLOPT_HEADER, true); // track response url
       $this->setOption(CURLINFO_HEADER_OUT, true); // track request url
+
       # execute request
       $response = curl_exec($this->resource);
 
@@ -295,7 +281,8 @@
         throw new \InvalidArgumentException("Expect string.");
       }
 
-      preg_match_all('!([^:]+):(.*?)\n!', $headers, $matchedHeaders);
+      preg_match_all('!([^:]+):(.*?)(\n|$)!', $headers, $matchedHeaders);
+      
 
       if (empty($matchedHeaders[1])) {
         throw new \InvalidArgumentException('Could not load raw header');
@@ -332,19 +319,27 @@
     }
 
     /**
+     * @return array
+     */
+    public function getHeaders() {
+      return $this->headers;
+    }
+
+    
+    /**
      * Remove current headers
      *
      * @return $this
      */
     public function cleanHeaders() {
-//      curl_setopt($this->resource, CURLOPT_HTTPHEADER, null);
+      curl_setopt($this->resource, CURLOPT_HTTPHEADER, []);
       $this->headers = array();
       return $this;
     }
 
     /**
      *
-     * @return Debug
+     * @return null|Debug
      */
     public function getDebugClass() {
       return $this->debugClass;
