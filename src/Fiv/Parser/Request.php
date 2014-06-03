@@ -79,8 +79,8 @@
       CURLOPT_TIMEOUT => 10,
       CURLOPT_SSL_VERIFYPEER => false,
       CURLOPT_SSL_VERIFYHOST => false,
-      CURLOPT_COOKIEJAR => "/tmp/cookieJar.txt",
-      CURLOPT_COOKIEFILE => "/tmp/cookieFile.txt",
+      CURLOPT_COOKIEJAR => "/tmp/fiv-cookie.txt",
+      CURLOPT_COOKIEFILE => "/tmp/fiv-cookie.txt",
     );
 
     /**
