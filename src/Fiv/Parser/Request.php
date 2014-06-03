@@ -71,6 +71,7 @@
      * @var array
      */
     private $defaultOptions = array(
+      CURLOPT_ENCODING => '',
       CURLOPT_RETURNTRANSFER => true,
       CURLOPT_HEADER => false,
       CURLINFO_HEADER_OUT => true,
