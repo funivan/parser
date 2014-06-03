@@ -9,8 +9,11 @@
         convertErrorsToExceptions="true"
         >
 
-    <blacklist>
-        <directory>./demo-data</directory>
-    </blacklist>
+
+    <filter>
+        <whitelist>
+            <directory>../src/</directory>
+        </whitelist>
+    </filter>
 
 </phpunit>

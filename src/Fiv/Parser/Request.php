@@ -50,7 +50,7 @@
 
     /**
      *
-     * @var Fiv_Curl_Debug_Abstract
+     * @var Debug
      */
     protected $debugClass = null;
 
@@ -90,11 +90,15 @@
      */
     protected $resource = null;
 
+    /**
+     * Init curl 
+     * Set default headers and options
+     */
     public function __construct() {
       $this->resource = curl_init();
       # set default  params
-      $this->setHeader($this->defaultHeaders);
-      $this->setOptionsArray($this->defaultOptions);
+      $this->restoreDefaultHeaders();
+      $this->restoreDefaultOptions();
     }
 
     /**
@@ -107,10 +111,10 @@
     /**
      * Make post request
      *
-     * @param string                $url
+     * @param string $url
      * @param mixed (array, string) $post
-     * @param boolean               $follow
-     * @param integer               $level
+     * @param boolean $follow
+     * @param integer $level
      * @return mixed (string, boolean)
      */
     public function post($url, $post, $follow = true, $level = 5) {
@@ -127,7 +131,7 @@
 
     /**
      *
-     * @param string  $url
+     * @param string $url
      * @param boolean $follow
      * @param integer $level
      * @return mixed (string, boolean)
@@ -148,7 +152,7 @@
      *
      * @author  Ivan Scherbak <dev@funivan.com>
      * @version 7/5/12
-     * @param string  $url
+     * @param string $url
      * @param boolean $follow
      * @param integer $level
      */
@@ -194,24 +198,21 @@
         $response = $this->responseBody;
       }
 
-      $r = isset($optionsBeforeRequest[CURLOPT_HEADER]) ? $optionsBeforeRequest[CURLOPT_HEADER] : false;
-
-      # set options to default but not all
-      $this->setOptionsArray(array(
+      # set changed options to default
+      $this->setOptions(array(
         CURLOPT_HEADER => isset($optionsBeforeRequest[CURLOPT_HEADER]) ? $optionsBeforeRequest[CURLOPT_HEADER] : false,
         CURLINFO_HEADER_OUT => isset($optionsBeforeRequest[CURLINFO_HEADER_OUT]) ? $optionsBeforeRequest[CURLINFO_HEADER_OUT] : false,
       ));
-
-      $optionsBeforeRequest = $this->getOptions();
 
       if ($debugClass) {
         $debugClass->afterRequest($this);
       }
 
-      if ($this->stepByStep != false) {
-        $url = !empty($this->info->url) ? $this->info->url : false;
-        $this->setOptionsArray(array(CURLOPT_REFERER => $url));
+      if ($this->stepByStep) {
+        # set referrer from last affected url
+        $this->setOption(CURLOPT_REFERER, $this->getInfo()->getUrl());
       }
+
       return $response;
     }
 
@@ -226,6 +227,7 @@
     }
 
     /**
+     * Return information about latest request
      *
      * @return \Fiv\Parser\Request\Info
      */
@@ -233,6 +235,13 @@
       return new \Fiv\Parser\Request\Info(curl_getinfo($this->resource));
     }
 
+    /**
+     * Set single option CURLOPT_*
+     *
+     * @param int $option
+     * @param mixed $value
+     * @return $this
+     */
     public function setOption($option, $value) {
       curl_setopt($this->resource, $option, $value);
       $this->options[$option] = $value;
@@ -245,7 +254,7 @@
      * @param array $optionsArray
      * @return $this
      */
-    public function setOptionsArray(array $optionsArray) {
+    public function setOptions(array $optionsArray) {
       foreach ($optionsArray as $key => $value) {
         $this->options[$key] = $value;
       }
@@ -262,36 +271,75 @@
     }
 
     /**
+     * Remove current options
      *
-     * @param boolean|string|array $headers
-     * @param boolean              $raw
-     * @param boolean              $merge
-     * @throws \Exeption
-     * @return array
+     * @return $this
      */
-    public function setHeader($headers, $raw = false, $merge = true) {
-      if ($raw == true and is_string($headers)) {
-        preg_match_all('!([^:]+):(.*?)\n!', $headers, $matches);
-        if (!empty($matches[1])) {
-          unset($headers);
-          foreach ($matches[1] as $k => $name) {
-            $headers[trim($name)] = $matches[2][$k];
-          }
-        } else {
-          throw new \Exeption('Could not load raw header');
-        }
+    public function cleanOptions() {
+      foreach ($this->options as $name => $value) {
+        curl_setopt($this->resource, $name, null);
+      }
+      $this->options = array();
+      return $this;
+    }
+
+    /**
+     * Set headers from string
+     *
+     * @param string $headers
+     * @return $this
+     */
+    public function setRawHeaders($headers) {
+
+      if (!is_string($headers)) {
+        throw new \InvalidArgumentException("Expect string.");
       }
 
-      if ($merge == false) {
-        $curlHttpHeaderArray = $headers != false ? $headers : $this->headers;
-      } else {
-        $curlHttpHeaderArray = $headers != false ? $headers + $this->headers : $this->headers;
+      preg_match_all('!([^:]+):(.*?)\n!', $headers, $matchedHeaders);
+
+      if (empty($matchedHeaders[1])) {
+        throw new \InvalidArgumentException('Could not load raw header');
       }
-      foreach ($curlHttpHeaderArray as $name => $value) {
+
+      $headersArray = array();
+      foreach ($matchedHeaders[1] as $k => $name) {
+        $headersArray[trim($name)] = $matchedHeaders[2][$k];
+      }
+
+      $this->setHeaders($headersArray);
+
+      return $this;
+    }
+
+    /**
+     *
+     * @param array $headers
+     * @return $this
+     */
+    public function setHeaders($headers) {
+
+      if (!is_array($headers)) {
+        throw new \InvalidArgumentException('Expect array');
+      }
+
+      foreach ($headers as $name => $value) {
         $this->headers[$name] = $name . ":" . $value;
       }
-      $this->setOption(CURLOPT_HTTPHEADER, $this->headers);
-      return $this->headers;
+
+      curl_setopt($this->resource, CURLOPT_HTTPHEADER, $this->headers);
+
+      return $this;
+    }
+
+    /**
+     * Remove current headers
+     *
+     * @return $this
+     */
+    public function cleanHeaders() {
+//      curl_setopt($this->resource, CURLOPT_HTTPHEADER, null);
+      $this->headers = array();
+      return $this;
     }
 
     /**
@@ -323,6 +371,28 @@
      */
     public function getResponseHeader() {
       return $this->responseHeader;
+    }
+
+    /**
+     * Remove current headers and set default
+     *
+     * @return $this
+     */
+    public function restoreDefaultHeaders() {
+      $this->cleanHeaders();
+      $this->setHeaders($this->defaultHeaders);
+      return $this;
+    }
+
+    /**
+     * Remove current curl options and set default
+     *
+     * @return $this
+     */
+    public function restoreDefaultOptions() {
+      $this->cleanOptions();
+      $this->setOptions($this->defaultOptions);
+      return $this;
     }
 
   }

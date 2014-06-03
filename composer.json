@@ -3,7 +3,8 @@
   "description": "Parser bundle",
   "autoload": {
     "psr-0": {
-      "Fiv\\Parser\\": "src/"
+      "Fiv\\Parser\\": "src/",
+      "ParserTests\\": "tests/"
     }
   },
   "license": "GPL v2",
