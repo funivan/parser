@@ -1,6 +1,8 @@
 <?php
   namespace Fiv\Parser;
 
+  use Fiv\Parser\Dom\ElementFinder;
+
   /**
    * More powerful of curl and html classes
    *
@@ -20,7 +22,7 @@
     public $request = null;
 
     /**
-     * @var Html|null
+     * @var ElementFinder|null
      */
     protected $lastPage = null;
 
@@ -41,7 +43,7 @@
      * @param string $url
      * @param boolean $follow
      * @param integer $level
-     * @return Html object
+     * @return ElementFinder object
      */
     public function getHtml($url, $follow = true, $level = 5) {
       $page = $this->request->get($url, $follow, $level);
@@ -55,7 +57,7 @@
      * @param array $post Array of data
      * @param boolean $follow Follow location
      * @param integer $level Maximum redirect level
-     * @return Html object
+     * @return ElementFinder object
      */
     public function postHtml($url, $post, $follow = true, $level = 5) {
       $page = $this->request->post($url, $post, $follow, $level);
@@ -68,12 +70,12 @@
      *
      * @param string $page
      * @param \Fiv\Parser\Request\Info|\Fiv\Parser\stdClass $info
-     * @return Html
+     * @return ElementFinder
      * @author  Ivan Scherbak <dev@funivan.com> 10/03/12
      */
     public static function createHtmlObj($page, \Fiv\Parser\Request\Info $info = null) {
       $defaultEncoding = 'utf-8';
-      $html = new Html();
+      $html = new ElementFinder();
 
       $type = $info->getContentType() ? strtolower($info->getContentType()) : "";
 
@@ -136,10 +138,10 @@
      * @author  Ivan Scherbak <dev@funivan.com>
      * @version 12/26/12 11:18 PM
      * @param string $path
-     * @param Html $page
+     * @param ElementFinder $page
      * @return array
      */
-    public static function getDefaultFormData($path, Html $page) {
+    public static function getDefaultFormData($path, ElementFinder $page) {
       $formData = array();
 
       # textarea
@@ -173,14 +175,14 @@
      * @param      $formData
      * @param      $formPath
      * @param bool $checkForm
-     * @return Html
+     * @return ElementFinder
      * @throws \Exception
      */
     public function submitForm($formData, $formPath, $checkForm = false) {
       $page = $this->lastPage;
 
-      if (!$page instanceof Html) {
-        throw new \Exception('Property $page must be instance of Html');
+      if (!$page instanceof ElementFinder) {
+        throw new \Exception('Property $page must be instance of ElementFinder');
       }
 
       if ($checkForm) {
@@ -221,12 +223,12 @@
      * @author  Ivan Scherbak <dev@funivan.com> 10/03/12
      * @version 12/26/12 11:08 PM
      * @param string $currentUrl
-     * @param Html $page
-     * @return Html
+     * @param ElementFinder $page
+     * @return ElementFinder
      */
-    public static function convertLinksToAbsolute($currentUrl, Html $page) {
+    public static function convertLinksToAbsolute($currentUrl, ElementFinder $page) {
 
-      if (empty($currentUrl)) {
+      if (empty($currentUrl) or true) {
         return $page;
       }
 
@@ -238,7 +240,7 @@
       $linkWithoutParams = $realDomain . trim($link['path'], '/');
       $linkPath = $realDomain . trim(preg_replace('!/([^/]+)$!', '', $link['path']), '/');
 
-      $getBaseUrl = $page->href('//base', 0);
+      $getBaseUrl = $page->attribute('//base', 'href')->item(0);
       if (!empty($getBaseUrl)) {
         $getBaseUrl = rtrim($getBaseUrl, '/') . '/';
       }
@@ -308,7 +310,7 @@
     }
 
     /**
-     * @return Html|null
+     * @return ElementFinder|null
      */
     public function getLastPage() {
       return $this->lastPage;

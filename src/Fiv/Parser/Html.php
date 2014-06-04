@@ -159,7 +159,7 @@
      *
      * @param string $attribute
      * @param string $expression (default expression)
-     * @param null   $indexOfElement
+     * @param null $indexOfElement
      * @return type
      */
     public function RunQuery($attribute, $expression, $indexOfElement = null) {
@@ -191,13 +191,13 @@
     /**
      * Run before return elements
      *
-     * @param array                     $result
+     * @param array $result
      * @param mixed (boolean | integer) $indexOfElement
-     * @return mixed (array | string | false | \DOMNodeList | \DOMElement)
+     * @return mixed (array | string | false | DOMNodeList | DOMElement)
      */
     private function BeforeGet($result, $indexOfElement = null) {
       if ($indexOfElement !== null) {
-        if ($result instanceof \DOMNodeList) {
+        if ($result instanceof DOMNodeList) {
           $data = $result->item($indexOfElement);
         } else {
           $data = isset($result[$indexOfElement]) ? $result[$indexOfElement] : false;
@@ -228,9 +228,9 @@
      * $table = $html->match('!(\d{4,})!')->_html('//table');
      * $table = $html->match('!(\d{4,})!', 3, 'all')->_html('//table');
      * </code>
-     * @param string  $regex
+     * @param string $regex
      * @param integer $i
-     * @param bool    $matchMethod
+     * @param bool $matchMethod
      * @return $this
      */
     public function match($regex, $i = 1, $matchMethod = false) {
@@ -242,10 +242,10 @@
     /**
      * Match regex in document
      * <code>
-     *  $tels = $html->matchDoc('!([0-9]{4,6})!');
+     * $tels = $html->matchDoc('!([0-9]{4,6})!');
      * </code>
      *
-     * @param string  $regex
+     * @param string $regex
      * @param integer $i
      * @return array
      */
@@ -257,7 +257,7 @@
 
     /**
      * <code>
-     *  $table = $replace->replace('!00!')->_html('//table');
+     * $table = $replace->replace('!00!')->_html('//table');
      * </code>
      *
      * @param string $regex
@@ -273,7 +273,7 @@
      * Replace in document and refresh it
      *
      * <code>
-     *  $html->replaceDoc('!00!', '11');
+     * $html->replaceDoc('!00!', '11');
      * </code>
      *
      * @param string $regex
@@ -290,7 +290,7 @@
     /**
      *
      * @param string $value
-     * @param array  $params
+     * @param array $params
      * @return array
      */
     private function _preg_match_all($value, $params) {
@@ -305,7 +305,7 @@
     /**
      *
      * @param string $value
-     * @param array  $params
+     * @param array $params
      * @return string
      */
     private function _preg_match($value, $params) {
@@ -319,7 +319,7 @@
 
     /**
      * @param string $value
-     * @param array  $params
+     * @param array $params
      * @return array
      */
     private function _preg_replace($value, $params) {
@@ -328,17 +328,17 @@
     }
 
     /**
-     * Magic method to get objects \DOMNodeList
+     * Magic method to get objects DOMNodeList
      *
      * <code>
      * $td = $html->_obj('.//td');
      * foreach($td as $el){
-     *    echo $el->nodeValue;
+     * echo $el->nodeValue;
      * }
      * </code>
      *
-     * @param \DOMNodeList $objects
-     * @return \DOMNodeList
+     * @param DOMNodeList $objects
+     * @return DOMNodeList
      */
     protected function Attr_obj($objects) {
       return $objects;
@@ -346,7 +346,7 @@
 
     /**
      *
-     * @param \DOMNodeList $objects
+     * @param DOMNodeList $objects
      * @return Html[]
      */
     protected function Attr_get($objects) {
@@ -357,7 +357,7 @@
 
     /**
      *
-     * @param \DOMNodeList $objects
+     * @param DOMNodeList $objects
      * @return Html[]
      */
     protected function Attr_outerGet($objects) {
@@ -391,9 +391,9 @@
      * Return inner html of elements
      *
      * <code>
-     *    $td = $html->_html('//td');
+     * $td = $html->_html('//td');
      * </code>
-     * @param \DOMNodeList $objects
+     * @param DOMNodeList $objects
      * @return array
      */
     protected function Attr_html($objects) {
@@ -415,7 +415,7 @@
      * $links = $html->_outerHtml('//a');
      * </code>
      *
-     * @param \DOMNodeList $objects
+     * @param DOMNodeList $objects
      * @return array
      */
     protected function Attr_outerHtml($objects) {
@@ -452,10 +452,10 @@
      * Delete elements from document
      *
      * <code>
-     *  $html->_del('//a')
+     * $html->_del('//a')
      * </code>
      *
-     * @param \DOMNodeList $objects
+     * @param DOMNodeList $objects
      * @return $this
      */
     protected function Attr_del($objects) {
@@ -476,7 +476,7 @@
      * </code>
      *
      * @author vkey <dev@vkey.org>
-     * @param \DOMNodeList $objects
+     * @param DOMNodeList $objects
      * @return array
      */
     protected function Attr_attributes($objects) {
@@ -498,11 +498,11 @@
      * Additional schemaTypeInfo, tagName and nodeValue
      *
      * <code>
-     *  $properties = $html->_properties('//p/a');
+     * $properties = $html->_properties('//p/a');
      * </code>
      *
      * @author Ivan Scherbak <dev@funivan.com>
-     * @param \DOMNodeList $objects
+     * @param DOMNodeList $objects
      * @return array
      */
     protected function Attr_properties($objects) {
@@ -525,21 +525,21 @@
     /**
      *
      * <code>
-     *  $elements = array(
-     *    'link'      => '//a@href',
-     *    'title'     => '//a',
-     *    'shortText' => '//p[2]',
-     *    'img'       => '//img/@src',
-     *  );
+     * $elements = array(
+     * 'link' => '//a@href',
+     * 'title' => '//a',
+     * 'shortText' => '//p[2]',
+     * 'img' => '//img/@src',
+     * );
      * $news = $html->getNodeItems('//*[@class="news"]', $params);
      * </code>
      *
      * By default we get first element
      * By default we get _html property of element
-     * Properties to fetch can be set in path //a@rel  for rel property of tag A
+     * Properties to fetch can be set in path //a@rel for rel property of tag A
      *
      * @param string $path
-     * @param array  $itemsParams
+     * @param array $itemsParams
      * @return array
      */
     public function getNodeItems($path, array $itemsParams) {
@@ -550,9 +550,9 @@
         foreach ($itemsParams as $elementResultIndex => $elementResultPath) {
           $elementsNode = $nodeDocument->_obj($elementResultPath);
           $value = false;
-          if ($elementsNode instanceof \DOMNodeList) {
+          if ($elementsNode instanceof DOMNodeList) {
             $item = $elementsNode->item(0);
-            if ($item instanceof \DOMElement) {
+            if ($item instanceof DOMElement) {
               $values = $this->Attr_html($elementsNode);
               $value = $values[0];
             } elseif (is_object($item)) {
