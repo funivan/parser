@@ -228,7 +228,7 @@
      */
     public static function convertLinksToAbsolute($currentUrl, ElementFinder $page) {
 
-      if (empty($currentUrl) or true) {
+      if (empty($currentUrl)) {
         return $page;
       }
 
@@ -240,12 +240,12 @@
       $linkWithoutParams = $realDomain . trim($link['path'], '/');
       $linkPath = $realDomain . trim(preg_replace('!/([^/]+)$!', '', $link['path']), '/');
 
-      $getBaseUrl = $page->attribute('//base', 'href')->item(0);
+      $getBaseUrl = $page->attribute('//base/@href')->item(0);
       if (!empty($getBaseUrl)) {
         $getBaseUrl = rtrim($getBaseUrl, '/') . '/';
       }
 
-      $srcElements = $page->_obj('//*[@src] | //*[@href] | //form[@action]');
+      $srcElements = $page->elements('//*[@src] | //*[@href] | //form[@action]');
 
       foreach ($srcElements as $element) {
         if ($element->hasAttribute('src') == true) {
