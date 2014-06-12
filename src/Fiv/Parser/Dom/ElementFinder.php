@@ -11,6 +11,10 @@
    */
   class ElementFinder {
 
+    const DOCUMENT_HTML = 'html';
+    
+    const DOCUMENT_XML = 'xml';
+
     /**
      * Hide errors
      *
@@ -23,7 +27,7 @@
      *
      * @var string
      */
-    public $docType = 'html';
+    public $docType = null;
 
     /**
      * @var \DOMDocument
@@ -54,6 +58,7 @@
      */
     public function __construct($rawHtml = false) {
       $this->dom = new \DomDocument();
+      $this->docType = static::DOCUMENT_HTML;
 
       if (!empty($rawHtml)) {
         $this->load($rawHtml);
@@ -213,11 +218,11 @@
         $htmlCode = '<document-is-empty></document-is-empty>';
       }
 
-      if ($this->docType == 'html') {
+      if ($this->docType == static::DOCUMENT_HTML) {
         $htmlCode = \Fiv\Parser\Dom\Helper::safeEncodeStr($htmlCode);
         $htmlCode = mb_convert_encoding($htmlCode, 'HTML-ENTITIES', "UTF-8");
         $result = $this->dom->loadHTML($htmlCode);
-      } elseif ($this->docType == 'xml') {
+      } elseif ($this->docType == static::DOCUMENT_XML) {
         $options = !empty($options) ? $options : LIBXML_NOCDATA ^ LIBXML_NOERROR;
         $result = $this->dom->loadXML($htmlCode, $options);
       } else {
@@ -225,7 +230,7 @@
       }
 
       # set new save function
-      $this->isHtml = ($this->docType == 'html');
+      $this->isHtml = ($this->docType == static::DOCUMENT_HTML);
 
       # create xpath obj
       $this->xpath = new \DomXPath($this->dom);

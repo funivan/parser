@@ -3,6 +3,7 @@
   namespace ParserTests\String;
 
   use Fiv\Parser\Grabber;
+  use Fiv\Parser\Helper;
 
   /**
    * @package ParserTests\String
@@ -16,7 +17,7 @@
     }
 
     public function testCleanPage() {
-      $content = Grabber::cleanPage(" t  f");
+      $content = Helper::cleanPage(" t  f");
       $this->assertEquals("t f", $content);
     }
 

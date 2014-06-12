@@ -62,7 +62,8 @@
     private $defaultHeaders = array(
       "User-Agent" => "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11",
       "Accept-Language" => "ru-RU,ru;q.9,en;q.8",
-      "Accept-Charset" => "iso-8859-1, utf-8, utf-16, *;q.1"
+      "Accept-Charset" => "iso-8859-1, utf-8, utf-16, *;q.1",
+      "Accept" => "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
     );
 
     /**
@@ -282,7 +283,6 @@
       }
 
       preg_match_all('!([^:]+):(.*?)(\n|$)!', $headers, $matchedHeaders);
-      
 
       if (empty($matchedHeaders[1])) {
         throw new \InvalidArgumentException('Could not load raw header');
@@ -325,7 +325,7 @@
       return $this->headers;
     }
 
-    
+
     /**
      * Remove current headers
      *
