@@ -3,7 +3,8 @@
   namespace Fiv\Parser\Dom\ElementFinder;
 
   /**
-   * @author Ivan Shcherbak <dev@funivan.com> 6/3/14
+   * @author Ivan Shcherbak <dev@funivan.com> 6/3/14                  
+   * @method \Fiv\Parser\Dom\ElementFinder\String offsetGet($offset);
    */
   class StringsCollections extends \Fiv\Spl\ObjectCollection {
 

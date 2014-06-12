@@ -4,6 +4,7 @@
 
   /**
    * @author Ivan Shcherbak <dev@funivan.com> 6/3/14
+   * @method \Fiv\Parser\Dom\ElementFinder\Element offsetGet($offset);
    */
   class ElementCollection extends \Fiv\Spl\ObjectCollection {
 
