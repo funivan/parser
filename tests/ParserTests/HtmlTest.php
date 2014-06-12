@@ -25,8 +25,8 @@
 
       $this->assertCount(1, $links);
 
-      foreach ($html->html("//a") as $object) {
-        $this->assertInstanceOf('\Fiv\Parser\Dom\ElementFinder\String', $object);
+      foreach ($html->html("//a") as $htmlString) {
+        $this->assertTrue(is_string($htmlString));
       }
 
       $firstLink = $html->html("//a", true)->item(0);
@@ -105,7 +105,7 @@
       $this->assertCount(4, $group);
 
       $this->assertNotEmpty($group[0]['b']);
-      
+
       foreach ($group as $i => $item) {
         $this->assertEmpty($item['if']);
       }

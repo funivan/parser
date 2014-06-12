@@ -4,15 +4,15 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "d930c93b212fd5476c54825e77425328",
+    "hash": "5651fbc6b4574b529227e116d401b02d",
     "packages": [
         {
             "name": "fiv/spl",
-            "version": "1.0.4",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
                 "url": "/home/ivan/work/www/fiv/spl",
-                "reference": "32bc1362fae4ba4981a2e79a759bc2a16c4aecd1"
+                "reference": "899c1adc5250471b7b31bbb332b49b625bf1adec"
             },
             "require": {
                 "php": ">=5.4"
@@ -37,7 +37,7 @@
                 }
             ],
             "description": "Standard library",
-            "time": "2014-05-28 07:36:28"
+            "time": "2014-06-12 13:18:55"
         }
     ],
     "packages-dev": [

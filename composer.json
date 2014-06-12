@@ -15,7 +15,7 @@
     }
   ],
   "require": {
-    "fiv/spl": "1.*"
+    "fiv/spl": "1.1.*"
   },
   "require-dev": {
     "phpunit/phpunit": "3.7.*"

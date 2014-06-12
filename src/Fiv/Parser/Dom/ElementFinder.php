@@ -88,7 +88,7 @@
           $html = Helper::getInnerHtml($node);
         }
 
-        $collection->append(new \Fiv\Parser\Dom\ElementFinder\String($html));
+        $collection->append($html);
 
       }
 
@@ -130,7 +130,7 @@
       $collection = new \Fiv\Parser\Dom\ElementFinder\StringsCollections();
       foreach ($items as $item) {
         /** @var \DOMAttr $item */
-        $collection->append(new \Fiv\Parser\Dom\ElementFinder\String($item->value));
+        $collection->append($item->value);
       }
 
       return $collection;
@@ -301,11 +301,7 @@
 
         foreach ($itemsParams as $elementResultIndex => $elementResultPath) {
           /** @var ElementFinder $nodeDocument */
-          $elementNode = $nodeDocument->html($elementResultPath)->item(0);
-
-          $value = !empty($elementNode) ? $elementNode->value() : '';
-
-          $nodeValues[$elementResultIndex] = $value;
+          $nodeValues[$elementResultIndex] = $nodeDocument->html($elementResultPath)->item(0);
         }
         $result[$nodeIndex] = $nodeValues;
       }
