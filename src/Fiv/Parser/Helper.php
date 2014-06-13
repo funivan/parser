@@ -23,27 +23,30 @@
       $formData = array();
 
       # textarea
-      $textarea = $page->keyValue($path . '//textarea', 'name', '_val');
-      $formData = array_merge($formData, $textarea);
+      foreach ($page->elements($path . '//textarea') as $textArea) {
+        $formData[$textArea->getAttribute('name')] = $textArea->nodeValue;
+      }
 
       # radio and checkboxes
-      $checked = $page->keyValue($path . '//input[@checked]', 'name', 'value');
-      $formData = array_merge($formData, $checked);
+      foreach ($page->elements($path . '//input[@checked]') as $textArea) {
+        $formData[$textArea->getAttribute('name')] = $textArea->getAttribute('value');
+      }
 
       # hidden, text, submit
-      $hiddenAndText = $page->keyValue($path . '//input[@type="hidden" or @type="text" or  @type="submit" or not(@type)]', 'name', 'value');
-      $formData = array_merge($formData, $hiddenAndText);
+      $hiddenAndTextElements = $page->elements($path . '//input[@type="hidden" or @type="text" or  @type="submit" or not(@type)]');
+      foreach ($hiddenAndTextElements as $element) {
+        $formData[$element->getAttribute('name')] = $element->getAttribute('value');
+      }
 
       # select
-      $selectItems = $page->_get('.//select');
+      $selectItems = $page->object($path . '//select', true);
+      foreach ($selectItems as $select) {
+        $name = $select->attribute('//select/@name')->item(0);
 
-      $selectNames = $page->name('.//select');
-      foreach ($selectItems as $k => $select) {
-        $firstValue = $select->value('.//option[1]', 0);
-        $selectedValue = $select->value('.//option[@selected]', 0);
-        $value = !empty($selectedValue) ? $selectedValue : $firstValue;
-        $name = $selectNames[$k];
-        $formData[$name] = $value;
+        $firstValue = $select->value('//option[1]')->item(0);
+        $selectedValue = $select->value('//option[@selected]')->item(0);
+
+        $formData[$name] = !empty($selectedValue) ? $selectedValue : $firstValue;;
       }
 
       return $formData;
@@ -198,4 +201,5 @@
 
       return $elementFinder;
     }
+
   } 

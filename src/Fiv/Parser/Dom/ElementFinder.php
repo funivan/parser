@@ -12,7 +12,7 @@
   class ElementFinder {
 
     const DOCUMENT_HTML = 'html';
-    
+
     const DOCUMENT_XML = 'xml';
 
     /**
@@ -108,6 +108,20 @@
       }
 
       return $this;
+    }
+
+
+    /**
+     * @param $xpath
+     * @return \Fiv\Parser\Dom\ElementFinder\StringsCollections
+     */
+    public function value($xpath) {
+      $items = $this->xpath->query($xpath);
+      $collection = new \Fiv\Parser\Dom\ElementFinder\StringsCollections();
+      foreach ($items as $node) {
+        $collection->append($node->nodeValue);
+      }
+      return $collection;
     }
 
 

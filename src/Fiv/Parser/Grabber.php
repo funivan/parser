@@ -68,7 +68,6 @@
     }
 
 
-
     /**
      * @param      $formData
      * @param      $formPath
@@ -84,14 +83,14 @@
       }
 
       if ($checkForm) {
-        $form = $page->_html($formPath, 0);
+        $form = $page->html($formPath)->item(0);
         if (empty($form)) {
           throw new \Exception('Form not found in current page');
         }
       }
 
       # get form method
-      $formMethod = $page->method($formPath, 0);
+      $formMethod = $page->attribute($formPath . '/@method')->item(0);
       if (strtolower($formMethod) == 'post') {
         $requestMethod = 'postHtml';
       } else {
@@ -107,9 +106,9 @@
         }
       }
       # get action url
-      $actionUrl = $page->action($formPath, 0);
+      $actionUrl = $page->attribute($formPath . '/@action')->item(0);
       if (empty($actionUrl)) {
-        $actionUrl = $this->request->getInfo()->url;
+        $actionUrl = $this->request->getInfo()->getUrl();
       }
 
       return $this->$requestMethod($actionUrl, $postFormData);
