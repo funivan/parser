@@ -1,8 +1,6 @@
 <?php
   namespace Fiv\Parser;
 
-  use Fiv\Parser\Dom\ElementFinder;
-
   /**
    * More powerful of curl and html classes
    *
@@ -26,27 +24,36 @@
      */
     protected $lastPage = null;
 
-    public function __construct() {
-      $this->request = new Request();
+    /**
+     * @param null|Request $request
+     */
+    public function __construct($request = null) {
+
+      if (empty($request)) {
+        $request = new Request();
+      }
+
+      $this->request = $request;
     }
 
     /**
+     * Initialize new grabber class
+     *
+     * @param null|Object $request
      * @return static
      */
-    public static function init() {
-      return new static();
+    public static function init($request = null) {
+      return new static($request);
     }
 
 
     /**
      *
      * @param string $url
-     * @param boolean $follow
-     * @param integer $level
-     * @return ElementFinder object
+     * @return \Fiv\Parser\Dom\ElementFinder object
      */
-    public function getHtml($url, $follow = true, $level = 5) {
-      $page = $this->request->get($url, $follow, $level);
+    public function getHtml($url) {
+      $page = $this->request->get($url);
       $info = $this->request->getInfo();
       $this->lastPage = Helper::createElementFinder($page, $info->getUrl(), $info->getContentType());
       return $this->lastPage;
@@ -55,13 +62,11 @@
     /**
      *
      * @param string $url Page url
-     * @param array $post Array of data
-     * @param boolean $follow Follow location
-     * @param integer $level Maximum redirect level
-     * @return ElementFinder object
+     * @param array $data Array of data
+     * @return \Fiv\Parser\Dom\ElementFinder object
      */
-    public function postHtml($url, $post, $follow = true, $level = 5) {
-      $page = $this->request->post($url, $post, $follow, $level);
+    public function postHtml($url, $data) {
+      $page = $this->request->post($url, $data);
       $info = $this->request->getInfo();
       $this->lastPage = Helper::createElementFinder($page, $info->getUrl(), $info->getContentType());
       return $this->lastPage;
@@ -72,20 +77,20 @@
      * @param      $formData
      * @param      $formPath
      * @param bool $checkForm
-     * @return ElementFinder
-     * @throws \Exception
+     * @return \Fiv\Parser\Dom\ElementFinder
+     * @throws \Fiv\Parser\Exception
      */
     public function submitForm($formData, $formPath, $checkForm = false) {
       $page = $this->getLastPage();
 
-      if (!$page instanceof ElementFinder) {
-        throw new \Exception('Property $page must be instance of ElementFinder');
+      if (!$page instanceof \Fiv\Parser\Dom\ElementFinder) {
+        throw new \Fiv\Parser\Exception('Property $page must be instance of \Fiv\Parser\Dom\ElementFinder');
       }
 
       if ($checkForm) {
         $form = $page->html($formPath)->item(0);
         if (empty($form)) {
-          throw new \Exception('Form not found in current page');
+          throw new \Fiv\Parser\Exception('Form not found in current page');
         }
       }
 
@@ -116,7 +121,7 @@
 
 
     /**
-     * @return ElementFinder|null
+     * @return \Fiv\Parser\Dom\ElementFinder|null
      */
     public function getLastPage() {
       return $this->lastPage;

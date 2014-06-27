@@ -2,20 +2,21 @@
 
   namespace Fiv\Parser\Debug;
 
-  use Fiv\Parser\Request;
-
   /**
    * Output debug information to file
    *
    * @author Ivan Scherbak <dev@funivan.com>
    */
-  class File implements \Fiv\Parser\Debug {
+  class File implements \Fiv\Parser\Debug\DebugInterface {
 
     protected $outputFile = '';
 
-    public function __construct($outputFile = false) {
+    /**
+     * @param string $outputFile
+     */
+    public function __construct($outputFile = '') {
       if (empty($outputFile)) {
-        $outputFile = '/tmp/' . preg_replace('!([^a-z0-9]{1,})!i', '_', get_called_class());
+        $outputFile = '/tmp/' . preg_replace('!([^a-z0-9]{1,})!i', '_', get_called_class()) . '.log';
       }
       $this->outputFile = $outputFile;
       # create empty file
@@ -30,6 +31,11 @@
       return $this->outputFile;
     }
 
+    /**
+     * @param string $data
+     * @param bool $titleText
+     * @return $this
+     */
     protected function writeData($data, $titleText = false) {
 
       $lineId = '#' . strftime('#%s - %F %T', time());
@@ -44,7 +50,10 @@
       return $this;
     }
 
-    public function beforeRequest(Request $request) {
+    /**
+     * @inheritdoc
+     */
+    public function beforeRequest(\Fiv\Parser\Request $request) {
 
       $options = $request->getOptions();
       $startSymbol = ">> ";
@@ -65,7 +74,10 @@
       }
     }
 
-    public function afterRequest(Request $request) {
+    /**
+     * @inheritdoc
+     */
+    public function afterRequest(\Fiv\Parser\Request $request) {
       $responseHeader = preg_replace("!^([A-z])!im", "<< $1", $request->getResponseHeader());
       $this->writeData($responseHeader, 'Response Header');
 

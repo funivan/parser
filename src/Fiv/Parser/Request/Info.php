@@ -59,12 +59,21 @@
       "primaryip" => "primary_ip",
     );
 
+    /**
+     * @param array $data
+     * @throws \Fiv\Parser\Exception
+     */
     public function __construct($data = array()) {
       if (!empty($data)) {
         $this->setData($data);
       }
     }
 
+    /**
+     * @param $name
+     * @param $arguments
+     * @throws \Fiv\Parser\Exception
+     */
     public function __call($name, $arguments) {
       $name = strtolower($name);
       $methodName = substr($name, 3);
@@ -72,14 +81,22 @@
         return isset($this->data[$methodName]) ? $this->data[$methodName] : null;
       }
 
-      throw new \Exception('Invalid method name #' . $name);
+      throw new \Fiv\Parser\Exception('Invalid method name #' . $name);
     }
 
+    public function __sleep() {
+      return array('data');
+    }
 
+    /**
+     * @param $data
+     * @return $this
+     * @throws \Fiv\Parser\Exception
+     */
     public function setData($data) {
 
       if (!is_array($data)) {
-        throw new \Exception('Invalid data type in ' . get_called_class());
+        throw new \Fiv\Parser\Exception('Invalid data type in ' . get_called_class());
       }
       $this->data = array();
 
@@ -93,7 +110,4 @@
       return $this;
     }
 
-    public function getDataMap() {
-      return $this->dataMap;
-    }
   }

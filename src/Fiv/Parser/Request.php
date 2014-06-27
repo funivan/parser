@@ -3,10 +3,10 @@
   namespace Fiv\Parser;
 
   /**
-   * <code>
-   * $request = new Request();
+   * ```php
+   * $request = new \Fiv\Parser\Request();
    * $request->setOption(CURLOPT_PROXY, $proxy);
-   * </code>
+   * ```
    *
    * @author  Ivan Scherbak <dev@funivan.com>
    * @created 11/10/2009
@@ -14,13 +14,6 @@
    *
    */
   class Request {
-
-    /**
-     * If true set referrer automatically when request page
-     *
-     * @var boolean
-     */
-    public $stepByStep = true;
 
     /**
      *
@@ -33,6 +26,23 @@
      * @var string
      */
     protected $responseHeader = '';
+
+
+    /**
+     * Containing the last error for the current session
+     *
+     * http://curl.haxx.se/libcurl/c/libcurl-errors.html
+     *
+     * @var int
+     */
+    protected $error;
+
+    /**
+     * Information about request
+     *
+     * @var \Fiv\Parser\Request\Info
+     */
+    protected $info;
 
     /**
      * Current options of curl session
@@ -49,10 +59,11 @@
     protected $headers = array();
 
     /**
+     * Indicate that response header, body, and info taken from cache
      *
-     * @var Debug
+     * @var bool
      */
-    protected $debugClass = null;
+    protected $requestFromCache = false;
 
     /**
      * Default headers
@@ -87,6 +98,34 @@
     );
 
     /**
+     * If true set referrer automatically when request page
+     *
+     * @var boolean
+     */
+    protected $automaticallyChangeReferer = true;
+
+
+    /**
+     *
+     * @var \Fiv\Parser\Debug\DebugInterface
+     */
+    protected $debugAdapter = null;
+
+    /**
+     *
+     * @var \Fiv\Parser\Cache\FileCache
+     */
+    protected $cacheAdapter = null;
+
+    /**
+     * Indicate that request is restored from cache
+     *
+     * @var bool
+     */
+    protected $cached = false;
+
+
+    /**
      * Resource of curl session
      *
      * @var mixed (null, resource)
@@ -110,9 +149,15 @@
      *
      * @param string $url
      * @param array $data
-     * @return mixed (string, boolean)
+     * @return string
      */
     public function post($url, $data) {
+      $cacheKey = md5($url . serialize($data));
+
+      $data = $this->getFromCache(\Fiv\Parser\Cache\CacheInterface::TYPE_POST, $cacheKey);
+      if ($data !== null) {
+        return $data;
+      }
 
       $this->prepareRequest($url);
 
@@ -120,6 +165,8 @@
       $this->setOption(CURLOPT_POSTFIELDS, $data);
 
       $result = $this->executeRequest();
+
+      $this->saveToCache(\Fiv\Parser\Cache\CacheInterface::TYPE_POST, $cacheKey);
 
       return $result;
     }
@@ -131,6 +178,12 @@
      */
     public function get($url) {
 
+      $cacheKey = md5($url);
+      $data = $this->getFromCache(\Fiv\Parser\Cache\CacheInterface::TYPE_GET, $cacheKey);
+      if ($data !== null) {
+        return $data;
+      }
+
       $this->prepareRequest($url);
 
       $this->setOption(CURLOPT_HTTPGET, true);
@@ -140,7 +193,38 @@
 
       $result = $this->executeRequest();
 
+      $this->saveToCache(\Fiv\Parser\Cache\CacheInterface::TYPE_GET, $cacheKey);
+
       return $result;
+    }
+
+    /**
+     * @param string $type
+     * @param string $key
+     * @return null|string
+     */
+    protected function getFromCache($type, $key) {
+      if (!empty($this->cacheAdapter)) {
+        $data = $this->cacheAdapter->getRequestData($type, $key);
+        if (!empty($data)) {
+          return $this->restoreFromCachedData($data);
+        }
+      }
+
+      return null;
+    }
+
+    /**
+     * @param $type
+     * @param $key
+     * @return bool|int
+     */
+    protected function saveToCache($type, $key) {
+      if (!empty($this->cacheAdapter)) {
+        $data = \Fiv\Parser\Cache\Data::initFromRequest($this);
+        return $this->cacheAdapter->storeRequestData($type, $key, $data);
+      }
+      return false;
     }
 
     /**
@@ -163,28 +247,29 @@
      * @return string
      */
     protected function executeRequest() {
-      $debugClass = $this->getDebugClass();
+      $debugClass = $this->getDebugAdapter();
       if ($debugClass) {
         $debugClass->beforeRequest($this);
       }
 
+      $this->cached = false;
+      $this->error = null;
+      $this->info = null;
       # remember state of header in body
       $optionsBeforeRequest = $this->getOptions();
 
-      $this->setOption(CURLOPT_HEADER, true); // track response url
-      $this->setOption(CURLINFO_HEADER_OUT, true); // track request url
+      $this->setOption(CURLOPT_HEADER, true); # track response header
+      $this->setOption(CURLINFO_HEADER_OUT, true); # track request header
 
       # execute request
       $response = curl_exec($this->resource);
+      $this->error = curl_error($this->resource);
 
-      $info = $this->getInfo();
+      $this->info = new \Fiv\Parser\Request\Info(curl_getinfo($this->resource));
 
-      $this->responseHeader = substr($response, 0, $info->getHeaderSize());
-      $this->responseBody = substr($response, $info->getHeaderSize());
-      if (!isset($optionsBeforeRequest[CURLOPT_HEADER]) or $optionsBeforeRequest[CURLOPT_HEADER] == false) {
-        $response = $this->responseBody;
-      }
-
+      $this->responseHeader = substr($response, 0, $this->info->getHeaderSize());
+      $this->responseBody = substr($response, $this->info->getHeaderSize());
+      
       # set changed options to default
       $this->setOptions(array(
         CURLOPT_HEADER => isset($optionsBeforeRequest[CURLOPT_HEADER]) ? $optionsBeforeRequest[CURLOPT_HEADER] : false,
@@ -195,12 +280,12 @@
         $debugClass->afterRequest($this);
       }
 
-      if ($this->stepByStep) {
+      if ($this->automaticallyChangeReferer) {
         # set referrer from last affected url
         $this->setOption(CURLOPT_REFERER, $this->getInfo()->getUrl());
       }
 
-      return $response;
+      return $this->responseBody;
     }
 
     /**
@@ -210,7 +295,7 @@
      * @return int Returns the error number or 0 (zero) if no error occurred.
      */
     public function getError() {
-      return curl_error($this->resource);
+      return $this->error;
     }
 
     /**
@@ -219,7 +304,7 @@
      * @return \Fiv\Parser\Request\Info
      */
     public function getInfo() {
-      return new \Fiv\Parser\Request\Info(curl_getinfo($this->resource));
+      return $this->info;
     }
 
     /**
@@ -325,7 +410,6 @@
       return $this->headers;
     }
 
-
     /**
      * Remove current headers
      *
@@ -339,18 +423,18 @@
 
     /**
      *
-     * @return null|Debug
+     * @return null|\Fiv\Parser\Debug\DebugInterface
      */
-    public function getDebugClass() {
-      return $this->debugClass;
+    public function getDebugAdapter() {
+      return $this->debugAdapter;
     }
 
     /**
-     * @param Debug $debugClass
+     * @param \Fiv\Parser\Debug\DebugInterface $debugClass
      * @return $this
      */
-    public function setDebugClass(Debug $debugClass) {
-      $this->debugClass = $debugClass;
+    public function setDebugAdapter(\Fiv\Parser\Debug\DebugInterface $debugClass) {
+      $this->debugAdapter = $debugClass;
       return $this;
     }
 
@@ -388,6 +472,73 @@
       $this->cleanOptions();
       $this->setOptions($this->defaultOptions);
       return $this;
+    }
+
+    /**
+     * Set CURLOPT_COOKIEJAR and CURLOPT_COOKIEFILE
+     *
+     * @param string $filePath
+     * @return $this
+     */
+    public function setCookieFile($filePath) {
+      $this->setOptions([
+        CURLOPT_COOKIEJAR => $filePath,
+        CURLOPT_COOKIEFILE => $filePath,
+      ]);
+      return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getAutomaticallyChangeReferer() {
+      return $this->automaticallyChangeReferer;
+    }
+
+    /**
+     * @param boolean $automaticallyChangeReferer
+     * @return $this
+     */
+    public function setAutomaticallyChangeReferer($automaticallyChangeReferer) {
+      $this->automaticallyChangeReferer = $automaticallyChangeReferer;
+      return $this;
+    }
+
+    /**
+     * @return Cache\FileCache
+     */
+    public function getCacheAdapter() {
+      return $this->cacheAdapter;
+    }
+
+    /**
+     * @param Cache\FileCache $cacheAdapter
+     * @return $this
+     */
+    public function setCacheAdapter($cacheAdapter) {
+      $this->cacheAdapter = $cacheAdapter;
+      return $this;
+    }
+
+    /**
+     *
+     * @return bool
+     */
+    public function isCached() {
+      return !empty($this->cached);
+    }
+
+    /**
+     * @param \Fiv\Parser\Cache\Data $data
+     * @return string
+     */
+    protected function restoreFromCachedData(\Fiv\Parser\Cache\Data $data) {
+      $this->responseBody = $data->getBody();
+      $this->responseHeader = $data->getHeader();
+      $this->error = $data->getError();
+      $this->info = $data->getInfo();
+      $this->cached = true;
+      return $this->responseBody;
     }
 
   }

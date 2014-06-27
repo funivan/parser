@@ -15,11 +15,11 @@
      *
      * @author  Ivan Scherbak <dev@funivan.com>
      * @version 12/26/12 11:18 PM
-     * @param string $path
-     * @param Dom\ElementFinder $page
+     * @param string $path Xpath to form
+     * @param \Fiv\Parser\Dom\ElementFinder $page
      * @return array
      */
-    public static function getDefaultFormData($path, ElementFinder $page) {
+    public static function getDefaultFormData($path, \Fiv\Parser\Dom\ElementFinder $page) {
       $formData = array();
 
       # textarea
@@ -58,9 +58,10 @@
      * @author  Ivan Scherbak <dev@funivan.com> 10/03/12
      * @version 12/26/12 11:08 PM
      * @param string $currentUrl
-     * @param ElementFinder $page
+     * @param \Fiv\Parser\Dom\ElementFinder $page
+     * @return \Fiv\Parser\Dom\ElementFinder
      */
-    public static function convertLinksToAbsolute($currentUrl, ElementFinder $page) {
+    public static function convertLinksToAbsolute($currentUrl, \Fiv\Parser\Dom\ElementFinder $page) {
 
       $link = parse_url($currentUrl);
 
@@ -122,6 +123,7 @@
 
         $element->setAttribute($attrName, $newPath);
       }
+      
       return $page;
     }
 
@@ -145,12 +147,12 @@
      * @param string $page
      * @param string|null $affectedUrl
      * @param string|null $pageType
-     * @throws \Exception
-     * @return ElementFinder
+     * @throws \Fiv\Parser\Exception
+     * @return \Fiv\Parser\Dom\ElementFinder
      */
     public static function createElementFinder($page, $affectedUrl = null, $pageType = null) {
       $defaultEncoding = 'utf-8';
-      $elementFinder = new ElementFinder();
+      $elementFinder = new \Fiv\Parser\Dom\ElementFinder();
 
       $pageInfo = array(
         'charset' => null,
@@ -196,7 +198,7 @@
 
       # convert href and src to full path
       if ($affectedUrl) {
-        Helper::convertLinksToAbsolute($affectedUrl, $elementFinder);
+        \Fiv\Parser\Helper::convertLinksToAbsolute($affectedUrl, $elementFinder);
       }
 
       return $elementFinder;

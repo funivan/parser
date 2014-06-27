@@ -53,10 +53,15 @@ Accept-Charset:iso-8859-1, utf-8, utf-16, *;q.1
 
     }
 
+    public function testPost() {
+      $request = new \Fiv\Parser\Request();
+      $request->post('http://localhost/', ['a']);
+      $this->assertEmpty($request->getError());
+    }
 
     public function testDebugClassInitialization() {
       $r = new \Fiv\Parser\Request();
-      $r->setDebugClass(new \Fiv\Parser\Debug\File());
-      $this->assertInstanceOf('\Fiv\Parser\Debug\File', $r->getDebugClass());
+      $r->setDebugAdapter(new \Fiv\Parser\Debug\File());
+      $this->assertInstanceOf('\Fiv\Parser\Debug\File', $r->getDebugAdapter());
     }
   } 

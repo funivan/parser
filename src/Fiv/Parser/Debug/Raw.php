@@ -2,19 +2,20 @@
 
   namespace Fiv\Parser\Debug;
 
-  use Fiv\Parser\Request;
-
   /**
-   * Debug class for request
+   * DebugInterface class for request
    * Output log information to screen
    *
    * @author Ivan Scherbak <dev@funivan.com>
    */
-  class Raw implements \Fiv\Parser\Debug {
+  class Raw implements \Fiv\Parser\Debug\DebugInterface {
 
     protected $showBodyStatus = false;
 
-    public function beforeRequest(Request $request) {
+    /**
+     * @inheritdoc
+     */
+    public function beforeRequest(\Fiv\Parser\Request $request) {
 
       $options = $request->getOptions();
       $startSymbol = " >> ";
@@ -36,8 +37,10 @@
         echo '<pre>' . __LINE__ . '***' . print_r($options[CURLOPT_POSTFIELDS], true) . '</pre>';
       }
     }
-
-    public function afterRequest(Request $request) {
+    /**
+     * @inheritdoc
+     */
+    public function afterRequest(\Fiv\Parser\Request $request) {
       $this->showLine('Response Header');
       $responseHeader = preg_replace("!^([A - z])!im", " << $1", $request->getResponseHeader());
       echo $responseHeader;
@@ -49,6 +52,9 @@
       }
     }
 
+    /**
+     * @param $text
+     */
     protected function showLine($text) {
       echo "\n\n" . str_repeat('=', 10) . ' ' . $text . ' ' . str_repeat('=', 50 - strlen($text)) . "\n";
     }

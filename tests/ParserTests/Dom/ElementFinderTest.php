@@ -3,11 +3,15 @@
    * @author Ivan Shcherbak <dev@funivan.com>
    */
 
-  namespace ParserTests;
+  namespace ParserTests\Dom;
 
   use Fiv\Parser\Dom\ElementFinder;
 
-  class HtmlTest extends \ParserTests\Main {
+  /**
+   *
+   * @package ParserTests\Dom
+   */
+  class ElementFinderTest extends \ParserTests\Main {
 
     protected function getTestFilePath() {
       return $this->getDemoDataDirectoryPath() . '/test.html';
@@ -71,15 +75,15 @@
       $this->assertCount(count($spanElements), $spanItems);
     }
 
-    public function _testDelete() {
+    public function testDelete() {
       $html = $this->getTestHtmlObject();
 
-      $title = $html->_val('//title', 0);
+      $title = $html->value('//title')->item(0);
       $this->assertEquals('test doc', $title);
 
-      $html->_del('//title');
+      $html->remove('//title');
 
-      $title = $html->_val('//title', 0);
+      $title = $html->value('//title')->item(0);
       $this->assertEmpty($title);
 
     }
@@ -110,17 +114,6 @@
         $this->assertEmpty($item['if']);
       }
 
-    }
-
-    public function _testPropertiesSelector() {
-      $html = $this->getTestHtmlObject();
-      $links = $html->_properties('//a');
-      $this->assertCount(1, $links);
-      $this->assertCount(5, $links[0]);
-
-      $this->assertEquals(null, $links[0]['_schemaTypeInfo']);
-      $this->assertEquals('a', $links[0]['_tagName']);
-      $this->assertEquals('link', $links[0]['_nodeValue']);
     }
 
     /**

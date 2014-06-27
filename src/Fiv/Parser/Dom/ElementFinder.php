@@ -153,7 +153,7 @@
     /**
      * @param $xpath
      * @param bool $fromOuterHtml
-     * @throws \Exception
+     * @throws \Fiv\Parser\Exception
      * @return \Fiv\Parser\Dom\ElementFinder\HtmlCollection
      */
     public function object($xpath, $fromOuterHtml = false) {
@@ -220,7 +220,7 @@
      *
      * @param string $htmlCode
      * @param boolean $options (only for xml)
-     * @throws \Exception
+     * @throws \Fiv\Parser\Exception
      * @return \DomXPath
      */
     public function load($htmlCode, $options = false) {
@@ -240,7 +240,7 @@
         $options = !empty($options) ? $options : LIBXML_NOCDATA ^ LIBXML_NOERROR;
         $result = $this->dom->loadXML($htmlCode, $options);
       } else {
-        throw new \Exception('Doc type not valid. use xml or html');
+        throw new \Fiv\Parser\Exception('Doc type not valid. use xml or html');
       }
 
       # set new save function

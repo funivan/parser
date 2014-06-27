@@ -4,9 +4,13 @@
 
   /**
    * @package DemoProjectTests
+   * @codeCoverageIgnore
    */
-  class Main extends \PHPUnit_Framework_TestCase {
+  abstract class Main extends \PHPUnit_Framework_TestCase {
 
+    /**
+     * @return string
+     */
     protected function getDemoDataDirectoryPath() {
       return __DIR__ . '/../demo-data/';
     }
