@@ -125,4 +125,13 @@
       return $html;
     }
 
+    public function testRegexpReplace() {
+
+      $fileData = file_get_contents($this->getDemoDataDirectoryPath() . '/data.html');
+      $html = new ElementFinder($fileData);
+//      echo "\n***".__LINE__."***\n<pre>".print_r(, true)."</pre>\n";die();
+      return $html;
+
+    }
+
   } 

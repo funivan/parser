@@ -139,7 +139,6 @@
     public function __construct() {
       $this->resource = curl_init();
       # set default  params
-      $this->restoreDefaultHeaders();
       $this->restoreDefaultOptions();
     }
 
@@ -148,11 +147,11 @@
      * Make post request
      *
      * @param string $url
-     * @param array $data
+     * @param array $postData
      * @return string
      */
-    public function post($url, $data) {
-      $cacheKey = md5($url . serialize($data));
+    public function post($url, $postData) {
+      $cacheKey = md5($url . serialize($postData));
 
       $data = $this->getFromCache(\Fiv\Parser\Cache\CacheInterface::TYPE_POST, $cacheKey);
       if ($data !== null) {
@@ -162,7 +161,7 @@
       $this->prepareRequest($url);
 
       $this->setOption(CURLOPT_POST, 1);
-      $this->setOption(CURLOPT_POSTFIELDS, $data);
+      $this->setOption(CURLOPT_POSTFIELDS, $postData);
 
       $result = $this->executeRequest();
 
@@ -269,7 +268,7 @@
 
       $this->responseHeader = substr($response, 0, $this->info->getHeaderSize());
       $this->responseBody = substr($response, $this->info->getHeaderSize());
-      
+
       # set changed options to default
       $this->setOptions(array(
         CURLOPT_HEADER => isset($optionsBeforeRequest[CURLOPT_HEADER]) ? $optionsBeforeRequest[CURLOPT_HEADER] : false,
@@ -391,14 +390,14 @@
     public function setHeaders($headers) {
 
       if (!is_array($headers)) {
-        throw new \InvalidArgumentException('Expect array');
+        throw new \InvalidArgumentException('Expect key=> value array');
       }
 
       foreach ($headers as $name => $value) {
         $this->headers[$name] = $name . ":" . $value;
       }
 
-      curl_setopt($this->resource, CURLOPT_HTTPHEADER, $this->headers);
+      $this->setOption(CURLOPT_HTTPHEADER, $this->headers);
 
       return $this;
     }
@@ -453,24 +452,15 @@
     }
 
     /**
-     * Remove current headers and set default
-     *
-     * @return $this
-     */
-    public function restoreDefaultHeaders() {
-      $this->cleanHeaders();
-      $this->setHeaders($this->defaultHeaders);
-      return $this;
-    }
-
-    /**
      * Remove current curl options and set default
      *
      * @return $this
      */
     public function restoreDefaultOptions() {
       $this->cleanOptions();
+      $this->cleanHeaders();
       $this->setOptions($this->defaultOptions);
+      $this->setHeaders($this->defaultHeaders);
       return $this;
     }
 
