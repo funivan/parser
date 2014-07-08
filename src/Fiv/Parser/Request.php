@@ -341,6 +341,14 @@
       return $this->options;
     }
 
+    public function getOption($key) {
+      if (!isset($this->options[$key])) {
+        return null;
+      }
+
+      return $this->options[$key];
+    }
+
     /**
      * Remove current options
      *
@@ -415,7 +423,7 @@
      * @return $this
      */
     public function cleanHeaders() {
-      curl_setopt($this->resource, CURLOPT_HTTPHEADER, []);
+      $this->setOption(CURLOPT_HTTPHEADER, array());
       $this->headers = array();
       return $this;
     }

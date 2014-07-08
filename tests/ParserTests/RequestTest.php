@@ -34,12 +34,15 @@
     public function testSetRawHeaders() {
 
       $request = new \Fiv\Parser\Request();
-      $rawHeaders = "
-Accept-Language:ru-RU,ru;q.9,en;q.8
-Accept-Charset:iso-8859-1, utf-8, utf-16, *;q.1     
+      $rawHeaders = "Accept-Language:ru-RU,ru;q.9,en;q.8 
+          Accept-Charset:iso-8859-1, utf-8, utf-16, *;q.1     
       ";
 
       $request->cleanHeaders();
+
+      $headers = $request->getOption(CURLOPT_HEADER);
+      $this->assertEmpty($headers);
+
       $request->setRawHeaders($rawHeaders);
 
       $this->assertCount(2, $request->getHeaders());
@@ -55,7 +58,7 @@ Accept-Charset:iso-8859-1, utf-8, utf-16, *;q.1
 
     public function testPost() {
       $request = new \Fiv\Parser\Request();
-      $request->post('http://localhost/', ['a']);
+      $request->post('http://127.0.0.1/', ['a']);
       $this->assertEmpty($request->getError());
     }
 
