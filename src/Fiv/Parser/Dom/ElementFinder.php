@@ -11,8 +11,14 @@
    */
   class ElementFinder {
 
+    /**
+     * Html document type
+     */
     const DOCUMENT_HTML = 'html';
 
+    /**
+     * Xml document type
+     */
     const DOCUMENT_XML = 'xml';
 
     /**
@@ -73,13 +79,13 @@
     /**
      * @param $xpath
      * @param bool $outerHtml
-     * @return \Fiv\Parser\Dom\ElementFinder\StringsCollections
+     * @return \Fiv\Parser\Dom\ElementFinder\StringCollection
      */
     public function html($xpath, $outerHtml = false) {
 
       $items = $this->xpath->query($xpath);
 
-      $collection = new \Fiv\Parser\Dom\ElementFinder\StringsCollections();
+      $collection = new \Fiv\Parser\Dom\ElementFinder\StringCollection();
 
       foreach ($items as $key => $node) {
         if ($outerHtml) {
@@ -113,11 +119,11 @@
 
     /**
      * @param $xpath
-     * @return \Fiv\Parser\Dom\ElementFinder\StringsCollections
+     * @return \Fiv\Parser\Dom\ElementFinder\StringCollection
      */
     public function value($xpath) {
       $items = $this->xpath->query($xpath);
-      $collection = new \Fiv\Parser\Dom\ElementFinder\StringsCollections();
+      $collection = new \Fiv\Parser\Dom\ElementFinder\StringCollection();
       foreach ($items as $node) {
         $collection->append($node->nodeValue);
       }
@@ -136,12 +142,12 @@
      *
      * ```
      * @param $xpath
-     * @return \Fiv\Parser\Dom\ElementFinder\StringsCollections
+     * @return \Fiv\Parser\Dom\ElementFinder\StringCollection
      */
     public function attribute($xpath) {
       $items = $this->xpath->query($xpath);
 
-      $collection = new \Fiv\Parser\Dom\ElementFinder\StringsCollections();
+      $collection = new \Fiv\Parser\Dom\ElementFinder\StringCollection();
       foreach ($items as $item) {
         /** @var \DOMAttr $item */
         $collection->append($item->value);
@@ -154,12 +160,12 @@
      * @param $xpath
      * @param bool $fromOuterHtml
      * @throws \Fiv\Parser\Exception
-     * @return \Fiv\Parser\Dom\ElementFinder\HtmlCollection
+     * @return \Fiv\Parser\Dom\ElementFinder\ObjectCollection
      */
     public function object($xpath, $fromOuterHtml = false) {
       $items = $this->xpath->query($xpath);
 
-      $collection = new \Fiv\Parser\Dom\ElementFinder\HtmlCollection();
+      $collection = new \Fiv\Parser\Dom\ElementFinder\ObjectCollection();
       foreach ($items as $node) {
         /** @var \DOMElement $node */
         if ($fromOuterHtml) {
@@ -229,16 +235,16 @@
       libxml_use_internal_errors($this->hideErrors);
 
       if (empty($htmlCode)) {
-        $htmlCode = '<document-is-empty></document-is-empty>';
+        $htmlCode = '<body><document-is-empty/></body>';
       }
 
       if ($this->docType == static::DOCUMENT_HTML) {
         $htmlCode = \Fiv\Parser\Dom\Helper::safeEncodeStr($htmlCode);
         $htmlCode = mb_convert_encoding($htmlCode, 'HTML-ENTITIES', "UTF-8");
-        $result = $this->dom->loadHTML($htmlCode);
+        $this->dom->loadHTML($htmlCode);
       } elseif ($this->docType == static::DOCUMENT_XML) {
         $options = !empty($options) ? $options : LIBXML_NOCDATA ^ LIBXML_NOERROR;
-        $result = $this->dom->loadXML($htmlCode, $options);
+        $this->dom->loadXML($htmlCode, $options);
       } else {
         throw new \Fiv\Parser\Exception('Doc type not valid. use xml or html');
       }
@@ -255,41 +261,47 @@
 
     /**
      * Match regex in document
-     * <code>
-     *  $tels = $html->matchDoc('!([0-9]{4,6})!');
-     * </code>
+     * ```php
+     *  $tels = $html->match('!([0-9]{4,6})!');
+     * ```
      *
      * @param string $regex
      * @param integer $i
      * @return array
      */
-    public function matchDoc($regex, $i = 1) {
-      $elements = $this->html('.')->getFirst();
-      return $elements;
+    public function match($regex, $i = 1) {
+      $documentHtml = $this->html('.')->getFirst();
+      preg_match_all($regex, $documentHtml, $matchedData);
+
+      if (isset($matchedData[$i])) {
+        return $matchedData[$i];
+      } else {
+        return array();
+      }
     }
 
 
     /**
      * Replace in document and refresh it
      *
-     * <code>
-     *  $html->replaceDoc('!00!', '11');
-     * </code>
+     * ```php
+     *  $html->replace('!00!', '11');
+     * ```
      *
      * @param string $regex
      * @param string $to
      * @return $this
      */
-    public function replaceDoc($regex, $to = '') {
-      $this->replace($regex, $to);
-      $newDoc = $this->_outerHtml('.', 0);
+    public function replace($regex, $to = '') {
+      $newDoc = $this->html('.', true)->getFirst();
+      $newDoc = preg_replace($regex, $to, $newDoc);
       $this->load($newDoc);
       return $this;
     }
 
     /**
      *
-     * <code>
+     * ```php
      *  $elements = array(
      *    'link'      => '//a@href',
      *    'title'     => '//a',
@@ -297,10 +309,10 @@
      *    'img'       => '//img/@src',
      *  );
      * $news = $html->getNodeItems('//*[@class="news"]', $params);
-     * </code>
+     * ```
      *
      * By default we get first element
-     * By default we get _html property of element
+     * By default we get html property of element
      * Properties to fetch can be set in path //a@rel  for rel property of tag A
      *
      * @param string $path

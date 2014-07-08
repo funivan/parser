@@ -8,6 +8,8 @@
   class Element extends \DOMElement {
 
     /**
+     * Array of element attributes
+     *
      * @return array
      */
     public function getAttributes() {
@@ -15,7 +17,8 @@
       foreach ($this->attributes as $attr) {
         $attributes[$attr->name] = $attr->value;
       }
-      
+
       return $attributes;
     }
+
   } 

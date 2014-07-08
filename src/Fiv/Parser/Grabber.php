@@ -6,21 +6,20 @@
    *
    * ```
    * // get copyright text from page
-   * $author = \Fiv\Parser\Grabber::init()->getHtml()->_val('//*[@class="copyright"]', 0)
+   * $author = \Fiv\Parser\Grabber::init()->getHtml()->html('//*[@class="copyright"]')->getFirst();
+   * echo $author;
    * ```
    * @author  Ivan Scherbak <dev@funivan.com>
    */
   class Grabber {
 
-    const N = __CLASS__;
-
     /**
      * @var null|Request
      */
-    public $request = null;
+    protected $request = null;
 
     /**
-     * @var ElementFinder|null
+     * @var \Fiv\Parser\Dom\ElementFinder|null
      */
     protected $lastPage = null;
 
@@ -39,11 +38,27 @@
     /**
      * Initialize new grabber class
      *
-     * @param null|Object $request
+     * @param null|Request $request
      * @return static
      */
     public static function init($request = null) {
       return new static($request);
+    }
+
+    /**
+     * @param Request $request
+     * @return $this
+     */
+    public function setRequest(Request $request) {
+      $this->request = $request;
+      return $this;
+    }
+
+    /**
+     * @return Request
+     */
+    public function getRequest() {
+      return $this->request;
     }
 
 

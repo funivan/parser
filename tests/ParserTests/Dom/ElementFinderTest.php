@@ -13,17 +13,38 @@
    */
   class ElementFinderTest extends \ParserTests\Main {
 
-    protected function getTestFilePath() {
-      return $this->getDemoDataDirectoryPath() . '/test.html';
-    }
-
     public function testLoad() {
-      $html = $this->getTestHtmlObject();
+      $html = $this->getHtmlTestObject();
       $this->assertContains('<title>test doc</title>', (string)$html);
     }
 
+    /**
+     * @expectedException \Fiv\Parser\Exception
+     */
+    public function testInvalidType() {
+      $elementFinder = new ElementFinder();
+      $elementFinder->docType = 444;
+      $elementFinder->load('test');
+    }
+
+    public function testLoadEmptyDoc() {
+      $elementFinder = new ElementFinder();
+      $elementFinder->load('');
+      $this->assertContains('<document-is-empty/>', (string)$elementFinder);
+    }
+
+    public function testNodeList() {
+
+      $html = $this->getHtmlTestObject();
+      $spanNodes = $html->node('//span');
+
+      $this->assertInstanceOf('\DOMNodeList', $spanNodes);
+
+      $this->assertEquals(4, $spanNodes->length);
+    }
+
     public function testAttributes() {
-      $html = $this->getTestHtmlObject();
+      $html = $this->getHtmlTestObject();
 
       $links = $html->attribute("//a/@href");
 
@@ -40,7 +61,7 @@
 
 
     public function testObjects() {
-      $html = $this->getTestHtmlObject();
+      $html = $this->getHtmlTestObject();
 
       $spanItems = $html->object("//span");
 
@@ -66,17 +87,10 @@
 
     }
 
-    public function testElements() {
-      $html = $this->getTestHtmlObject();
-
-      $spanElements = $html->elements("//span");
-      $spanItems = $spanElements->getAttributes();
-
-      $this->assertCount(count($spanElements), $spanItems);
-    }
+    
 
     public function testDelete() {
-      $html = $this->getTestHtmlObject();
+      $html = $this->getHtmlTestObject();
 
       $title = $html->value('//title')->item(0);
       $this->assertEquals('test doc', $title);
@@ -90,8 +104,13 @@
 
 
     public function testHtmlSelector() {
-      $html = $this->getTestHtmlObject();
-      $title = $html->html('//td')->item(0);
+      $html = $this->getHtmlTestObject();
+      $stringCollection = $html->html('//td');
+
+      $this->assertCount(1, $stringCollection);
+      $this->assertEquals('', $stringCollection->item(10));
+
+      $title = $stringCollection->item(0);
       $this->assertEquals('custom <a href="http://funivan.com/" title="my blog">link</a>', (string)$title);
 
       $title = $html->html('//td/@df')->item(0);
@@ -99,7 +118,7 @@
     }
 
     public function testGetNodeItems() {
-      $html = $this->getTestHtmlObject();
+      $html = $this->getHtmlTestObject();
       $group = $html->getNodeItems('//span', array(
         'b' => '//b[1]',
         'i' => '//o',
@@ -116,22 +135,57 @@
 
     }
 
-    /**
-     * @return ElementFinder
-     */
-    public function getTestHtmlObject() {
-      $fileData = file_get_contents($this->getTestFilePath());
-      $html = new ElementFinder($fileData);
-      return $html;
-    }
 
     public function testRegexpReplace() {
+      $html = $this->getHtmlDataObject();
+      $html->replace('!-!', '+');
 
-      $fileData = file_get_contents($this->getDemoDataDirectoryPath() . '/data.html');
-      $html = new ElementFinder($fileData);
-//      echo "\n***".__LINE__."***\n<pre>".print_r(, true)."</pre>\n";die();
+      $this->assertContains('45+12+16', (string)$html);
+
+      $phones = $html->html('//*[@id="tels"]');
+
+      $this->assertCount(1, $phones);
+
+      $phones->replace('![\+\s]!');
+
+      $this->assertContains('451216', $phones->getFirst());
+
       return $html;
 
+    }
+
+    public function testMatch() {
+
+      $html = $this->getHtmlDataObject();
+      $regex = '!([\d-]+)[<|\n]{1}!';
+
+      $phones = $html->match($regex);
+      $this->assertCount(2, $phones);
+
+      $phones = $html->match($regex, 0);
+      $this->assertCount(2, $phones);
+      $this->assertContains('<', $phones[0]);
+      $this->assertContains("\n", $phones[1]);
+
+      $phones = $html->match($regex, 4);
+      $this->assertCount(0, $phones);
+
+      return $html;
+
+    }
+
+    public function testObjectWithInnerHtml() {
+
+      $html = $this->getHtmlTestObject();
+
+      # inner 
+      $spanItems = $html->object('//span');
+      $this->assertCount(4, $spanItems);
+
+      $firstItem = $spanItems->item(0);
+
+      $this->assertNotContains('<span class="span-1">', (string)$firstItem);
+      $this->assertContains('<b>1 </b>', (string)$firstItem);
     }
 
   } 

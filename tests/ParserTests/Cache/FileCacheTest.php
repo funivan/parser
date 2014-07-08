@@ -5,7 +5,7 @@
   /**
    * @author Ivan Shcherbak <dev@funivan.com> 6/27/14
    */
-  class CacheTest extends \ParserTests\Main {
+  class FileCacheTest extends \ParserTests\Main {
 
     public function testGetFileCache() {
       $request = new \Fiv\Parser\Request();

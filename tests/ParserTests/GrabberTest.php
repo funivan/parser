@@ -13,7 +13,7 @@
     public function testInit() {
       $class = \Fiv\Parser\Grabber::init();
 
-      $this->assertInstanceOf(\Fiv\Parser\Grabber::N, $class);
+      $this->assertInstanceOf('\Fiv\Parser\Grabber', $class);
     }
 
     public function testCleanPage() {
@@ -23,8 +23,8 @@
 
     public function testLastPage() {
       $grabber = new Grabber();
-      $grabber->request->setOption(CURLOPT_TIMEOUT, 1);
-      $page = $grabber->getHtml("http://127.0.0.11");
+      $grabber->getRequest()->setOption(CURLOPT_TIMEOUT, 1);
+      $page = $grabber->getHtml("http://127.0.0.1");
       $this->assertEquals($page, $grabber->getLastPage());
     }
   }

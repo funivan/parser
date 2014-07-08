@@ -6,7 +6,7 @@
    * @author Ivan Shcherbak <dev@funivan.com> 6/3/14
    * @method string offsetGet($offset);
    */
-  class StringsCollections extends \Fiv\Spl\Collection {
+  class StringCollection extends \Fiv\Spl\Collection {
 
     /**
      * @param int $index
@@ -18,6 +18,19 @@
       } else {
         return "";
       }
+    }
+
+    /**
+     * @param string $regexp
+     * @param string $to
+     * @return $this
+     */
+    public function replace($regexp, $to = '') {
+      foreach ($this->items as $index => $item) {
+        $this->items[$index] = preg_replace($regexp, $to, $item);
+      }
+
+      return $this;
     }
 
   } 

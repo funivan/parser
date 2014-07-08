@@ -3,10 +3,10 @@
   namespace Fiv\Parser\Dom\ElementFinder;
 
   /**
-   * @author Ivan Shcherbak <dev@funivan.com> 6/3/14            
+   * @author Ivan Shcherbak <dev@funivan.com> 6/3/14
    * @method \Fiv\Parser\Dom\ElementFinder offsetGet($offset);
    */
-  class HtmlCollection extends \Fiv\Spl\ObjectCollection {
+  class ObjectCollection extends \Fiv\Spl\ObjectCollection {
 
     /**
      * Used for validation
@@ -31,5 +31,18 @@
         return null;
       }
     }
-    
+
+    /**
+     * @param string $regexp
+     * @param string $to
+     * @return $this
+     */
+    public function replace($regexp, $to = '') {
+      foreach ($this as $item) {
+        $item->replace($regexp, $to);
+      }
+
+      return $this;
+    }
+
   } 

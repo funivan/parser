@@ -31,13 +31,16 @@
       }
     }
 
+    /**
+     * Array of all elements attributes
+     *
+     * @return array
+     */
     public function getAttributes() {
       $allAttributes = array();
-      /** @var Element $element */
-      foreach ($this->items as $key => $element) {
+      foreach ($this as $key => $element) {
         $allAttributes[$key] = array();
         $allAttributes[$key] = $element->getAttributes();
-
       }
 
       return $allAttributes;
