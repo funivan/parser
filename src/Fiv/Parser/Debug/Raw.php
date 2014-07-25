@@ -37,6 +37,7 @@
         echo '<pre>' . __LINE__ . '***' . print_r($options[CURLOPT_POSTFIELDS], true) . '</pre>';
       }
     }
+
     /**
      * @inheritdoc
      */
@@ -53,7 +54,7 @@
     }
 
     /**
-     * @param $text
+     * @param string $text
      */
     protected function showLine($text) {
       echo "\n\n" . str_repeat('=', 10) . ' ' . $text . ' ' . str_repeat('=', 50 - strlen($text)) . "\n";
@@ -67,7 +68,7 @@
     }
 
     /**
-     * @param $showBodyStatus
+     * @param boolean $showBodyStatus
      * @return $this
      */
     public function setShowBodyStatus($showBodyStatus) {

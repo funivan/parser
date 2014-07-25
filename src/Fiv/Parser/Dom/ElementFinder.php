@@ -273,10 +273,12 @@
       $documentHtml = $this->html('.')->getFirst();
       preg_match_all($regex, $documentHtml, $matchedData);
 
+      $elements = new \Fiv\Parser\Dom\ElementFinder\StringCollection();
       if (isset($matchedData[$i])) {
-        return $matchedData[$i];
+        $elements->setItems($matchedData[$i]);
+        return $elements;
       } else {
-        return array();
+        return $elements;
       }
     }
 

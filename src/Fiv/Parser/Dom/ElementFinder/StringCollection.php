@@ -33,4 +33,30 @@
       return $this;
     }
 
+    /**
+     * Match strings and return new collection
+     * 
+     * @param string $regexp
+     * @param int $index
+     * @return StringCollection
+     */
+    public function match($regexp, $index = 1) {
+      $matchedItems = new StringCollection();
+
+      foreach ($this->items as $item) {
+        preg_match_all($regexp, $item, $matchedData);
+
+        if (empty($matchedData[$index])) {
+          continue;
+        }
+
+        foreach ($matchedData[$index] as $matchedString) {
+          $matchedItems[] = $matchedString;
+        }
+
+      }
+
+      return $matchedItems;
+    }
+
   } 

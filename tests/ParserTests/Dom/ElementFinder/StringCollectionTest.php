@@ -40,4 +40,28 @@
       }
 
     }
+
+    public function testMatch() {
+      $html = $this->getHtmlTestObject();
+      $spanItems = $html->html('//span[@class]');
+      $this->assertCount(3, $spanItems);
+
+      $tags = $spanItems->match('!(<[a-z]+>.)!');
+
+      $this->assertCount(6, $tags);
+      foreach ($tags as $index => $item) {
+        $result = preg_match('!^<[b|i]!', $item);
+        $this->assertTrue(!empty($result));
+      }
+
+      $tags = $spanItems->match('!<([a-z]+)>.!');
+
+      $this->assertCount(6, $tags);
+      foreach ($tags as $index => $item) {
+        $result = preg_match('!^[b|i]$!', $item);
+        $this->assertTrue(!empty($result));
+      }
+
+    }
+
   } 
