@@ -64,4 +64,20 @@
 
     }
 
+    public function testSplit() {
+      $html = $this->getHtmlDataObject();
+      $telsDiv = $html->html('//*[@id="tels"]');
+      $this->assertCount(1, $telsDiv);
+
+      $tels = $telsDiv->replace('!\s*!')->split('!<br[/]>!');
+
+      $this->assertCount(2, $tels);
+
+      foreach ($tels as $index => $item) {
+        $result = preg_match('!^([\d-]+)$!', $item);
+        $this->assertTrue(!empty($result));
+      }
+
+    }
+
   } 

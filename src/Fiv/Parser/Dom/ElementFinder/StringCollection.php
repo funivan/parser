@@ -35,7 +35,7 @@
 
     /**
      * Match strings and return new collection
-     * 
+     *
      * @param string $regexp
      * @param int $index
      * @return StringCollection
@@ -57,6 +57,26 @@
       }
 
       return $matchedItems;
+    }
+
+    /**
+     * Split strings by regexp
+     *
+     * @param string $regexp
+     * @return StringCollection
+     */
+    public function split($regexp) {
+      $items = new StringCollection();
+
+      foreach ($this->items as $item) {
+        
+        $data = preg_split($regexp, $item);
+        foreach ($data as $string) {
+          $items[] = $string;
+        }
+      }
+
+      return $items;
     }
 
   } 
