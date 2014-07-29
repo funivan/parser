@@ -209,7 +209,7 @@
       # get action url
       $actionUrl = $page->action($formPath, 0);
       if (empty($actionUrl)) {
-        $actionUrl = $this->request->getInfo()->url;
+        $actionUrl = $this->request->getInfo()->getUrl();
       }
 
       return $this->$requestMethod($actionUrl, $postFormData);
