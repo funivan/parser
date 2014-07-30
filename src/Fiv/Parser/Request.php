@@ -50,7 +50,7 @@
 
     /**
      *
-     * @var Fiv_Curl_Debug_Abstract
+     * @var Debug
      */
     protected $debugClass = null;
 
@@ -107,10 +107,10 @@
     /**
      * Make post request
      *
-     * @param string                $url
+     * @param string $url
      * @param mixed (array, string) $post
-     * @param boolean               $follow
-     * @param integer               $level
+     * @param boolean $follow
+     * @param integer $level
      * @return mixed (string, boolean)
      */
     public function post($url, $post, $follow = true, $level = 5) {
@@ -127,7 +127,7 @@
 
     /**
      *
-     * @param string  $url
+     * @param string $url
      * @param boolean $follow
      * @param integer $level
      * @return mixed (string, boolean)
@@ -148,7 +148,7 @@
      *
      * @author  Ivan Scherbak <dev@funivan.com>
      * @version 7/5/12
-     * @param string  $url
+     * @param string $url
      * @param boolean $follow
      * @param integer $level
      */
@@ -264,8 +264,8 @@
     /**
      *
      * @param boolean|string|array $headers
-     * @param boolean              $raw
-     * @param boolean              $merge
+     * @param boolean $raw
+     * @param boolean $merge
      * @throws \Exeption
      * @return array
      */
@@ -323,6 +323,10 @@
      */
     public function getResponseHeader() {
       return $this->responseHeader;
+    }
+
+    public function getHeaders() {
+      return $this->headers;
     }
 
   }
