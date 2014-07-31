@@ -10,7 +10,10 @@
     public function testGetFileCache() {
       $request = new \Fiv\Parser\Request();
       $fileCache = new \Fiv\Parser\Cache\FileCache();
-      $fileCache->setFileDirectory('/tmp/', 'cache-get-' . md5(time()) . '-');
+      $prefix = 'cache-get-' . md5(time()) . '-';
+      $directory = '/tmp/';
+
+      $fileCache->setFileDirectory($directory, $prefix);
 
       $request->setCacheAdapter($fileCache);
 
@@ -23,13 +26,17 @@
       $this->assertNotEmpty($secondData);
 
       $this->assertEquals($data, $secondData);
+
+      $this->removeCachedFiles($directory . $prefix);
     }
 
 
     public function testPostWithoutCache() {
       $request = new \Fiv\Parser\Request();
       $fileCache = new \Fiv\Parser\Cache\FileCache();
-      $fileCache->setFileDirectory('/tmp/', 'cache-post-' . md5(time()) . '-');
+      $prefix = 'cache-post-' . md5(time()) . '-';
+      $directory = '/tmp/';
+      $fileCache->setFileDirectory($directory, $prefix);
 
       $request->setCacheAdapter($fileCache);
       $request->post('http://localhost/', ['a']);
@@ -38,13 +45,16 @@
       $request->post('http://localhost/', ['a']);
       $this->assertFalse($request->isCached());
 
+      $this->removeCachedFiles($directory . $prefix);
     }
 
     public function testPostWithCache() {
 
       $request = new \Fiv\Parser\Request();
       $fileCache = new \Fiv\Parser\Cache\FileCache();
-      $fileCache->setFileDirectory('/tmp/', 'cache-post-' . md5(time()) . '-');
+      $filePrefix = 'cache-post-' . md5(time()) . '-';
+      $directory = '/tmp/';
+      $fileCache->setFileDirectory($directory, $filePrefix);
       $fileCache->setStorePostRequest(true);
 
       $request->setCacheAdapter($fileCache);
@@ -63,6 +73,7 @@
       $this->assertEquals($data, $cachedData);
       $this->assertEquals($info, $cachedInfo);
 
+      $this->removeCachedFiles($directory . $filePrefix);
     }
 
     /**
@@ -71,6 +82,16 @@
     public function testInvalidCacheRequestType() {
       $cache = new \Fiv\Parser\Cache\FileCache();
       $cache->getRequestData('123', 'a');
+    }
+
+    /**
+     * @param $prefix
+     */
+    protected function removeCachedFiles($prefix) {
+      $files = glob($prefix . '*');
+      foreach ($files as $filePath) {
+        unlink($filePath);
+      }
     }
 
   } 

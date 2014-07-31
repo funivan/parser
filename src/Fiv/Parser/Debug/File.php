@@ -16,7 +16,7 @@
      */
     public function __construct($outputFile = '') {
       if (empty($outputFile)) {
-        $outputFile = '/tmp/' . preg_replace('!([^a-z0-9]{1,})!i', '_', get_called_class()) . '.log';
+        $outputFile = '/tmp/' . microtime(true) . "__" . preg_replace('!([^a-z0-9]{1,})!i', '_', get_called_class()) . '.txt';
       }
       $this->outputFile = $outputFile;
       # create empty file

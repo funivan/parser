@@ -22,6 +22,15 @@
       $jsonData = json_decode($data);
       $this->assertInstanceOf('\stdClass', $jsonData);
 
+      unlink($outputFile);
+    }
+
+    public function testAutomaticallyGeneratedOutputFile() {
+      $harAdapter = new \Fiv\Parser\Debug\Har();
+      $path = $harAdapter->getOutputFile();
+
+      $this->assertFileExists($path);
+      unlink($path);
     }
 
   } 

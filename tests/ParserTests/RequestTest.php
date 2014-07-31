@@ -62,9 +62,4 @@
       $this->assertEmpty($request->getError());
     }
 
-    public function testDebugClassInitialization() {
-      $r = new \Fiv\Parser\Request();
-      $r->setDebugAdapter(new \Fiv\Parser\Debug\File());
-      $this->assertInstanceOf('\Fiv\Parser\Debug\File', $r->getDebugAdapter());
-    }
   } 

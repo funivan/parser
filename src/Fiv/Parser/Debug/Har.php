@@ -12,7 +12,6 @@
      */
     protected $outputFile = '';
 
-
     /**
      * @var \stdClass();
      */
@@ -24,11 +23,11 @@
     protected $lastPage = null;
 
     /**
-     * @param string $outputFile
+     * @param null|string $outputFile
      */
-    public function __construct($outputFile = '') {
+    public function __construct($outputFile = null) {
       if (empty($outputFile)) {
-        $outputFile = '/tmp/' . preg_replace('!([^a-z0-9]{1,})!i', '_', get_called_class()) . '.log';
+        $outputFile = '/tmp/' . microtime(true) . "__" . preg_replace('!([^a-z0-9]{1,})!i', '_', get_called_class()) . '.har';
       }
       $this->outputFile = $outputFile;
       # create empty file
@@ -48,10 +47,6 @@
      */
     public function getOutputFile() {
       return $this->outputFile;
-    }
-
-    protected function setPage() {
-
     }
 
     /**
@@ -116,7 +111,6 @@
 
       $headers = $request->getHeaders();
       foreach ($headers as $name => $value) {
-        $value = preg_replace("!^(" . $name . ")\s*:\s*!", "", $value);
         $entry->request->headers[] = (object)array("name" => $name, 'value' => $value);
       }
 

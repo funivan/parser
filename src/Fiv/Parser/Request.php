@@ -341,6 +341,10 @@
       return $this->options;
     }
 
+    /**
+     * @param string $key
+     * @return null|mixed
+     */
     public function getOption($key) {
       if (!isset($this->options[$key])) {
         return null;
@@ -391,6 +395,7 @@
     }
 
     /**
+     * Set headers from key => value array
      *
      * @param array $headers
      * @return $this
@@ -402,15 +407,22 @@
       }
 
       foreach ($headers as $name => $value) {
-        $this->headers[$name] = $name . ":" . $value;
+        $this->headers[$name] = $value;
       }
 
-      $this->setOption(CURLOPT_HTTPHEADER, $this->headers);
+      $curlHeaders = array();
+      foreach ($this->headers as $name => $value) {
+        $curlHeaders[] = $name . ":" . $value;
+      }
+
+      $this->setOption(CURLOPT_HTTPHEADER, $curlHeaders);
 
       return $this;
     }
 
     /**
+     * Return request headers
+     *
      * @return array
      */
     public function getHeaders() {
@@ -429,6 +441,7 @@
     }
 
     /**
+     * Return debug adapter
      *
      * @return null|\Fiv\Parser\Debug\DebugInterface
      */
@@ -437,6 +450,8 @@
     }
 
     /**
+     * Set debug adapter
+     *
      * @param \Fiv\Parser\Debug\DebugInterface $debugClass
      * @return $this
      */
@@ -446,6 +461,8 @@
     }
 
     /**
+     * Return response body
+     *
      * @return string
      */
     public function getResponseBody() {
@@ -453,6 +470,8 @@
     }
 
     /**
+     * Return response header
+     *
      * @return string
      */
     public function getResponseHeader() {
@@ -487,9 +506,11 @@
     }
 
     /**
+     * Indicate if we change referer automatically
+     *
      * @return boolean
      */
-    public function getAutomaticallyChangeReferer() {
+    public function isAutomaticallyChangeReferer() {
       return $this->automaticallyChangeReferer;
     }
 
@@ -503,14 +524,14 @@
     }
 
     /**
-     * @return Cache\FileCache
+     * @return \Fiv\Parser\Cache\CacheInterface
      */
     public function getCacheAdapter() {
       return $this->cacheAdapter;
     }
 
     /**
-     * @param Cache\FileCache $cacheAdapter
+     * @param \Fiv\Parser\Cache\CacheInterface $cacheAdapter
      * @return $this
      */
     public function setCacheAdapter($cacheAdapter) {
@@ -519,6 +540,7 @@
     }
 
     /**
+     * Indicate if our response is cached
      *
      * @return bool
      */
