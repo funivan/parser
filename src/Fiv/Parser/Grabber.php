@@ -89,13 +89,13 @@
 
 
     /**
-     * @param      $formData
-     * @param      $formPath
+     * @param array $formData
+     * @param string $formPath
      * @param bool $checkForm
      * @return \Fiv\Parser\Dom\ElementFinder
      * @throws \Fiv\Parser\Exception
      */
-    public function submitForm($formData, $formPath, $checkForm = false) {
+    public function submitForm($formData, $formPath, $checkForm = true) {
       $page = $this->getLastPage();
 
       if (!$page instanceof \Fiv\Parser\Dom\ElementFinder) {
