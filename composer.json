@@ -15,6 +15,7 @@
     }
   ],
   "require": {
+    "php": ">=5.4",
     "fiv/spl": "1.1.*"
   },
   "require-dev": {

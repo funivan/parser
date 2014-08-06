@@ -1,8 +1,8 @@
 <?php
+
   /**
    * @author Ivan Shcherbak <dev@funivan.com>
    */
-
   namespace ParserTests\Dom;
 
   use Fiv\Parser\Dom\ElementFinder;
@@ -87,7 +87,6 @@
 
     }
 
-    
 
     public function testDelete() {
       $html = $this->getHtmlTestObject();
@@ -135,7 +134,6 @@
 
     }
 
-
     public function testRegexpReplace() {
       $html = $this->getHtmlDataObject();
       $html->replace('!-!', '+');
@@ -149,8 +147,6 @@
       $phones->replace('![\+\s]!');
 
       $this->assertContains('451216', $phones->getFirst());
-
-      return $html;
 
     }
 
@@ -170,7 +166,6 @@
       $phones = $html->match($regex, 4);
       $this->assertCount(0, $phones);
 
-      return $html;
 
     }
 
