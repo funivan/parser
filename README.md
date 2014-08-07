@@ -4,7 +4,8 @@ Fiv/Parser
 Flexible way for data scraping 
                     
 [![Build Status](https://travis-ci.org/funivan/parser.svg?branch=dev-2.0)](https://travis-ci.org/funivan/parser)
-                    
+
+[![GitHub version](https://badge.fury.io/gh/funivan%2Fparser.svg)](http://badge.fury.io/gh/funivan%2Fparser)
 
 ## Installation
 `composer require fiv/parser:2.0.*`
