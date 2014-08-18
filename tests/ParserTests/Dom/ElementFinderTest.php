@@ -99,6 +99,28 @@
       $title = $html->value('//title')->item(0);
       $this->assertEmpty($title);
 
+      $this->assertEmpty($title);
+
+    }
+
+    public function testRemoveAttribute() {
+      $html = $this->getHtmlTestObject();
+
+      $this->assertCount(3, $html->value('//span[@class]'));
+      $this->assertCount(4, $html->value('//span'));
+
+      $firstSpanClass = $html->elements("//span")->item(0)->getAttribute('class');
+      $this->assertNotEmpty($firstSpanClass);
+
+      $html->remove("//span/@class");
+      $html->remove("//span/@df");
+
+      $this->assertCount(0, $html->value('//span[@class]'));
+      $this->assertCount(4, $html->value('//span'));
+
+      $firstSpanClass = $html->elements("//span")->item(0)->getAttribute('class');
+      $this->assertEmpty($firstSpanClass);
+
     }
 
 
@@ -165,7 +187,6 @@
 
       $phones = $html->match($regex, 4);
       $this->assertCount(0, $phones);
-
 
     }
 

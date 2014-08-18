@@ -101,7 +101,15 @@
       return $collection;
     }
 
-    /**
+    /**                                 
+     * You can remove elements and attributes
+     * 
+     * ```php               
+     * $html->remove("//span/@class");
+     *  
+     * $html->remove("//input");   
+     * ```      
+     * 
      * @param string $xpath
      * @return $this
      */
@@ -110,7 +118,12 @@
       $items = $this->xpath->query($xpath);
 
       foreach ($items as $key => $node) {
-        $node->parentNode->removeChild($node);
+        if ($node instanceof \DOMAttr) {
+          $node->ownerElement->removeAttribute($node->name);
+        } else {
+          $node->parentNode->removeChild($node);
+        }
+
       }
 
       return $this;
