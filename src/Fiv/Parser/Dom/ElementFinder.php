@@ -87,6 +87,10 @@
 
       $collection = new \Fiv\Parser\Dom\ElementFinder\StringCollection();
 
+      if ($items === false) {
+        return $collection;
+      }
+
       foreach ($items as $key => $node) {
         if ($outerHtml) {
           $html = Helper::getOuterHtml($node);
@@ -101,21 +105,25 @@
       return $collection;
     }
 
-    /**                                 
+    /**
      * You can remove elements and attributes
-     * 
-     * ```php               
+     *
+     * ```php
      * $html->remove("//span/@class");
-     *  
-     * $html->remove("//input");   
-     * ```      
-     * 
+     *
+     * $html->remove("//input");
+     * ```
+     *
      * @param string $xpath
      * @return $this
      */
     public function remove($xpath) {
 
       $items = $this->xpath->query($xpath);
+
+      if ($items === false) {
+        return $this;
+      }
 
       foreach ($items as $key => $node) {
         if ($node instanceof \DOMAttr) {
@@ -137,6 +145,11 @@
     public function value($xpath) {
       $items = $this->xpath->query($xpath);
       $collection = new \Fiv\Parser\Dom\ElementFinder\StringCollection();
+
+      if ($items === false) {
+        return $collection;
+      }
+
       foreach ($items as $node) {
         $collection->append($node->nodeValue);
       }
@@ -161,6 +174,10 @@
       $items = $this->xpath->query($xpath);
 
       $collection = new \Fiv\Parser\Dom\ElementFinder\StringCollection();
+
+      if ($items === false) {
+        return $collection;
+      }
       foreach ($items as $item) {
         /** @var \DOMAttr $item */
         $collection->append($item->value);
@@ -179,6 +196,11 @@
       $items = $this->xpath->query($xpath);
 
       $collection = new \Fiv\Parser\Dom\ElementFinder\ObjectCollection();
+
+      if ($items === false) {
+        return $collection;
+      }
+
       foreach ($items as $node) {
         /** @var \DOMElement $node */
         if ($fromOuterHtml) {
@@ -202,7 +224,11 @@
      * @return \DOMNodeList
      */
     public function node($xpath) {
-      return $this->xpath->query($xpath);
+      $nodeList = $this->xpath->query($xpath);
+      if ($nodeList === false) {
+        return new \DOMNodeList();
+      }
+      return $nodeList;
     }
 
 
@@ -215,6 +241,11 @@
       $nodeList = $this->xpath->query($xpath);
 
       $collection = new \Fiv\Parser\Dom\ElementFinder\ElementCollection();
+
+      if ($nodeList === false) {
+        return $collection;
+      }
+      
       foreach ($nodeList as $item) {
         $collection->append($item);
       }

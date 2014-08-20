@@ -123,7 +123,6 @@
 
     }
 
-
     public function testHtmlSelector() {
       $html = $this->getHtmlTestObject();
       $stringCollection = $html->html('//td');
@@ -136,6 +135,35 @@
 
       $title = $html->html('//td/@df')->item(0);
       $this->assertEmpty((string)$title);
+    }
+
+    public function testMalformedXpathExpression() {
+      $xpath = '//td\c';
+
+      $html = $this->getHtmlTestObject();
+      $collection = $html->value($xpath);
+      $this->assertCount(0, $collection);
+
+      $collection = $html->attribute($xpath);
+      $this->assertCount(0, $collection);
+
+      $collection = $html->html($xpath);
+      $this->assertCount(0, $collection);
+
+      $collection = $html->object($xpath);
+      $this->assertCount(0, $collection);
+
+      $collection = $html->node($xpath);
+      $this->assertInstanceOf('DOMNodeList', $collection);
+
+      $collection = $html->elements($xpath);
+      $this->assertCount(0, $collection);
+
+      $collection = $html->getNodeItems($xpath, array("title" => $xpath));
+      $this->assertCount(0, $collection);
+
+      $html->remove($xpath);
+
     }
 
     public function testGetNodeItems() {
