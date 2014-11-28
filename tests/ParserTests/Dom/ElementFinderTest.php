@@ -15,7 +15,7 @@
 
     public function testLoad() {
       $html = $this->getHtmlTestObject();
-      $this->assertContains('<title>test doc</title>', (string)$html);
+      $this->assertContains('<title>test doc</title>', (string) $html);
     }
 
     /**
@@ -30,7 +30,7 @@
     public function testLoadEmptyDoc() {
       $elementFinder = new ElementFinder();
       $elementFinder->load('');
-      $this->assertContains('<document-is-empty/>', (string)$elementFinder);
+      $this->assertContains('<document-is-empty/>', (string) $elementFinder);
     }
 
     public function testNodeList() {
@@ -56,7 +56,7 @@
 
       $firstLink = $html->html("//a", true)->item(0);
 
-      $this->assertContains('<a href="http://funivan.com/" title="my blog">link</a>', (string)$firstLink);
+      $this->assertContains('<a href="http://funivan.com/" title="my blog">link</a>', (string) $firstLink);
     }
 
 
@@ -131,10 +131,10 @@
       $this->assertEquals('', $stringCollection->item(10));
 
       $title = $stringCollection->item(0);
-      $this->assertEquals('custom <a href="http://funivan.com/" title="my blog">link</a>', (string)$title);
+      $this->assertEquals('custom <a href="http://funivan.com/" title="my blog">link</a>', (string) $title);
 
       $title = $html->html('//td/@df')->item(0);
-      $this->assertEmpty((string)$title);
+      $this->assertEmpty((string) $title);
     }
 
     public function testMalformedXpathExpression() {
@@ -188,7 +188,7 @@
       $html = $this->getHtmlDataObject();
       $html->replace('!-!', '+');
 
-      $this->assertContains('45+12+16', (string)$html);
+      $this->assertContains('45+12+16', (string) $html);
 
       $phones = $html->html('//*[@id="tels"]');
 
@@ -218,6 +218,7 @@
 
     }
 
+
     public function testObjectWithInnerHtml() {
 
       $html = $this->getHtmlTestObject();
@@ -228,8 +229,64 @@
 
       $firstItem = $spanItems->item(0);
 
-      $this->assertNotContains('<span class="span-1">', (string)$firstItem);
-      $this->assertContains('<b>1 </b>', (string)$firstItem);
+      $this->assertNotContains('<span class="span-1">', (string) $firstItem);
+      $this->assertContains('<b>1 </b>', (string) $firstItem);
+    }
+
+    public function testMatchCallback() {
+      $html = $this->getHtmlDataObject();
+      $regex = '!>\s*([\d-]+)\s*<br/>\s*([\d-]+)\s*<!im';
+
+      $phone = $html->match($regex)->getFirst();
+      $this->assertEquals($phone, '45-12-16');
+
+      $callback = function ($matchedData) {
+        return array(
+          $matchedData[1][0] . ',' . $matchedData[2][0]
+        );
+      };
+
+      $phone = $html->match($regex, $callback)->getFirst();
+      $this->assertEquals($phone, '45-12-16,84-18-90');
+
+      $custom = $html->match($regex, function () {
+        return array(1, 3, 1 * 4.55);
+      })->getLast();
+
+      $this->assertEquals(1 * 4.55, $custom);
+    }
+
+    /**
+     * @return array
+     */
+    public function matchCallbacksProvider() {
+      return [
+        [function () {
+          return 1;
+        }],
+
+        [function () {
+          return '';
+        }],
+        ['custom_invalid_callback'],
+        [function () {
+          return array(new \Fiv\Parser\Exception());
+        }],
+        [function () {
+          return array((object) 0.5);
+        }],
+      ];
+    }
+
+    /**
+     * @dataProvider matchCallbacksProvider
+     * @param callable $callback
+     * @expectedException \Fiv\Parser\Exception
+     */
+    public function testMatchErrors($callback) {
+      $html = $this->getHtmlDataObject();
+
+      $html->match('!.*!', $callback);
     }
 
   } 

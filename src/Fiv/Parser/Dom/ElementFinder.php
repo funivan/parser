@@ -245,7 +245,7 @@
       if ($nodeList === false) {
         return $collection;
       }
-      
+
       foreach ($nodeList as $item) {
         $collection->append($item);
       }
@@ -260,7 +260,7 @@
      */
     public function __toString() {
       $result = $this->html('.')->item(0);
-      return (string)$result;
+      return (string) $result;
     }
 
     /**
@@ -310,20 +310,40 @@
      * ```
      *
      * @param string $regex
-     * @param integer $i
-     * @return array
+     * @param integer|callback $i
+     * @return \Fiv\Parser\Dom\ElementFinder\StringCollection
+     * @throws \Fiv\Parser\Exception
      */
     public function match($regex, $i = 1) {
       $documentHtml = $this->html('.')->getFirst();
       preg_match_all($regex, $documentHtml, $matchedData);
 
       $elements = new \Fiv\Parser\Dom\ElementFinder\StringCollection();
-      if (isset($matchedData[$i])) {
-        $elements->setItems($matchedData[$i]);
-        return $elements;
+
+      if (is_int($i)) {
+        if (isset($matchedData[$i])) {
+          $elements->setItems($matchedData[$i]);
+        }
+      } elseif (is_callable($i)) {
+        $items = $i($matchedData);
+        if (!is_array($items)) {
+          throw new \Fiv\Parser\Exception("Invalid value. Expect array from callback");
+        }
+        foreach ($items as $string) {
+          if (is_string($string) or is_float($string) or is_integer($string)) {
+            continue;
+          }
+
+          throw new \Fiv\Parser\Exception("Invalid value. Expect array of strings:" . gettype($string));
+        }
+
+        $elements->setItems($items);
+
       } else {
-        return $elements;
+        throw new \Fiv\Parser\Exception('Expect integer or callback');
       }
+
+      return $elements;
     }
 
 
