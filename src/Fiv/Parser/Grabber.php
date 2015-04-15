@@ -85,7 +85,7 @@
       }
 
       if (empty($pageInfo['charset'])) {
-        preg_match('!<meta([^>]*)charset\s*=\s*(?<charset>[^>]+)\s*[^>]*>!Uu', $page, $pageInfoAdditional);
+        preg_match('!<meta([^>]*)charset\s*=\s*(?<charset>[^>]+)\s*[^>]*>!u', $page, $pageInfoAdditional);
         if (!empty($pageInfoAdditional['charset'])) {
           $pageInfo['charset'] = trim($pageInfoAdditional['charset'], '\'"');
         }
