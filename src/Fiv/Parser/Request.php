@@ -60,7 +60,7 @@
      * @var array
      */
     private $defaultHeaders = array(
-      "User-Agent" => "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11",
+      "User-Agent" => "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.90 Safari/537.36",
       "Accept-Language" => "ru-RU,ru;q.9,en;q.8",
       "Accept-Charset" => "iso-8859-1, utf-8, utf-16, *;q.1"
     );
