@@ -13,6 +13,9 @@
       "email": "dev@funivan.com"
     }
   ],
+  "replace": {
+    "fiv/parser": "1.0.*"
+  },
   "require-dev": {
     "phpunit/phpunit": "3.7.*"
   }
