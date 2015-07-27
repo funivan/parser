@@ -1,6 +1,6 @@
 <?php
 
-  namespace Fiv\Parser;
+  namespace Fiv\ParserV1;
 
   /**
    * Debug interface for Request

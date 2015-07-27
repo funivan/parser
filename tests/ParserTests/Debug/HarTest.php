@@ -9,9 +9,9 @@
 
     public function testHarLog() {
 
-      $request = new \Fiv\Parser\Request();
+      $request = new \Fiv\ParserV1\Request();
       $outputFile = "/tmp/" . md5(time()) . "-" . time() . "_log.har";
-      $harAdapter = new \Fiv\Parser\Debug\Har($outputFile);
+      $harAdapter = new \Fiv\ParserV1\Debug\Har($outputFile);
       $request->setDebugClass($harAdapter);
 
       $request->get("http://localhost/");

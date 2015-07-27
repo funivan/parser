@@ -1,11 +1,11 @@
 <?php
 
-  namespace Fiv\Parser\Debug;
+  namespace Fiv\ParserV1\Debug;
 
   /**
    * @author Ivan Shcherbak <dev@funivan.com> 7/30/14
    */
-  class Har implements \Fiv\Parser\Debug  {
+  class Har implements \Fiv\ParserV1\Debug  {
 
     /**
      * @var string
@@ -66,7 +66,7 @@
     /**
      * @inheritdoc
      */
-    public function beforeRequest(\Fiv\Parser\Request $request) {
+    public function beforeRequest(\Fiv\ParserV1\Request $request) {
 
       $page = new \stdClass();
       $page->startedDateTime = date("c");
@@ -133,7 +133,7 @@
     /**
      * @inheritdoc
      */
-    public function afterRequest(\Fiv\Parser\Request $request) {
+    public function afterRequest(\Fiv\ParserV1\Request $request) {
 
       $responseHeader = explode("\n", $request->getResponseHeader());
 

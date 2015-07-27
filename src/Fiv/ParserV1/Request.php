@@ -1,6 +1,6 @@
 <?php
 
-  namespace Fiv\Parser;
+  namespace Fiv\ParserV1;
 
   /**
    * <code>
@@ -227,10 +227,10 @@
 
     /**
      *
-     * @return \Fiv\Parser\Request\Info
+     * @return \Fiv\ParserV1\Request\Info
      */
     public function getInfo() {
-      return new \Fiv\Parser\Request\Info(curl_getinfo($this->resource));
+      return new \Fiv\ParserV1\Request\Info(curl_getinfo($this->resource));
     }
 
     public function setOption($option, $value) {

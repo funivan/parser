@@ -1,6 +1,6 @@
 <?php
 
-  namespace Fiv\Parser\Request;
+  namespace Fiv\ParserV1\Request;
 
   /**
    * @method getUrl()

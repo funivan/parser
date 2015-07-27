@@ -2,7 +2,7 @@
 
   namespace ParserTests\String;
 
-  use Fiv\Parser\Grabber;
+  use Fiv\ParserV1\Grabber;
 
   /**
    * @package ParserTests\String
@@ -10,9 +10,9 @@
   class GrabberTest extends \ParserTests\Main {
 
     public function testInit() {
-      $class = \Fiv\Parser\Grabber::init();
+      $class = \Fiv\ParserV1\Grabber::init();
 
-      $this->assertInstanceOf(\Fiv\Parser\Grabber::N, $class);
+      $this->assertInstanceOf(\Fiv\ParserV1\Grabber::N, $class);
     }
 
     public function testCleanPage() {

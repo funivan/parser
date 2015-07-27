@@ -1,15 +1,15 @@
 <?php
 
-  namespace Fiv\Parser\Debug;
+  namespace Fiv\ParserV1\Debug;
 
-  use Fiv\Parser\Request;
+  use Fiv\ParserV1\Request;
 
   /**
    * Output debug information to file
    *
    * @author Ivan Scherbak <dev@funivan.com>
    */
-  class File implements \Fiv\Parser\Debug {
+  class File implements \Fiv\ParserV1\Debug {
 
     protected $outputFile = '';
 

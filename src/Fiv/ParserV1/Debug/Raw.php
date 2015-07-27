@@ -1,8 +1,8 @@
 <?php
 
-  namespace Fiv\Parser\Debug;
+  namespace Fiv\ParserV1\Debug;
 
-  use Fiv\Parser\Request;
+  use Fiv\ParserV1\Request;
 
   /**
    * Debug class for request
@@ -10,7 +10,7 @@
    *
    * @author Ivan Scherbak <dev@funivan.com>
    */
-  class Raw implements \Fiv\Parser\Debug {
+  class Raw implements \Fiv\ParserV1\Debug {
 
     protected $showBodyStatus = false;
 

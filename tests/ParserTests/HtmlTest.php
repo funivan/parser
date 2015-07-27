@@ -5,7 +5,7 @@
 
   namespace ParserTests;
 
-  use Fiv\Parser\Html;
+  use Fiv\ParserV1\Html;
 
   class HtmlTest extends \ParserTests\Main {
 

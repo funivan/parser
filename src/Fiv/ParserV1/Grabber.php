@@ -1,5 +1,5 @@
 <?php
-  namespace Fiv\Parser;
+  namespace Fiv\ParserV1;
 
   /**
    * More powerful of curl and html classes
@@ -67,11 +67,11 @@
      * Info used for charset detection
      *
      * @param string $page
-     * @param \Fiv\Parser\Request\Info|\Fiv\Parser\stdClass $info
+     * @param \Fiv\ParserV1\Request\Info|\Fiv\ParserV1\stdClass $info
      * @return Html
      * @author  Ivan Scherbak <dev@funivan.com> 10/03/12
      */
-    public static function createHtmlObj($page, \Fiv\Parser\Request\Info $info = null) {
+    public static function createHtmlObj($page, \Fiv\ParserV1\Request\Info $info = null) {
       $defaultEncoding = 'utf-8';
       $html = new Html();
 

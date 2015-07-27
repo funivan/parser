@@ -1,9 +1,9 @@
 {
-  "name": "fiv/parser",
+  "name": "fiv/parserv1",
   "description": "Parser bundle",
   "autoload": {
     "psr-0": {
-      "Fiv\\Parser\\": "src/"
+      "Fiv\\ParserV1\\": "src/"
     }
   },
   "license": "GPL v2",
